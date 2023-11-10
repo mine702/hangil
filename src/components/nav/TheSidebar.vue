@@ -6,6 +6,9 @@ import IconHome from "@/components/icons/IconHome.vue";
 import IconSearch from "@/components/icons/IconSearch.vue";
 import IconUser from "@/components/icons/IconUser.vue";
 import IconBookmark from "@/components/icons/IconBookmark.vue";
+// logo
+import logo from "@/assets/img/hangil_logo.png";
+
 export default {
   name: "Sidebar",
   components: {
@@ -20,7 +23,9 @@ export default {
 
 <template>
   <aside class="sidebar">
-    <div class="logo">Workspace</div>
+    <div class="logo">
+      <img :src="logo" />
+    </div>
     <nav class="navigation">
       <ul>
         <li><icon-home /></li>

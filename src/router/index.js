@@ -10,9 +10,9 @@ const router = createRouter({
       redirect: { name: "boardList" },
       children: [
         {
-          path: "boardList",
+          path: "/boardList",
           name: "boardList",
-          component: () => import("../components/boards/TheBoardView.vue"),
+          component: () => import("../views/BoardView.vue"),
         },
       ],
     },

@@ -1,7 +1,77 @@
-<script setup></script>
+<script setup>
+import ImgSlides from "./imgslide/ImgSlide.vue";
+import IconHeart from "@/components/icons/IconHeart.vue";
+</script>
 
 <template>
-  <div>gdd</div>
+  <div class="board-card">
+    <div class="card-header">
+      <img class="profile-pic" src="@/assets/img/profile.png" alt="Profile" />
+      <span class="username">username</span>
+    </div>
+    <img-slides />
+    <div class="card-body">
+      <div class="card-actions">
+        <IconHeart></IconHeart>
+      </div>
+      <p class="description">
+        <span class="username">username</span> Lorem ipsum dolor sit amet,
+        consectetur adipiscing elit.
+      </p>
+    </div>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.board-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin: 40px;
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.profile-pic {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.card-image {
+  width: 100%;
+  display: block;
+}
+
+.card-body {
+  padding: 10px;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.icon-heart,
+.icon-comment,
+.icon-share {
+  margin-right: 10px;
+}
+
+.description {
+  font-size: 14px;
+  line-height: 1.5;
+}
+</style>
