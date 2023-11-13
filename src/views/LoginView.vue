@@ -12,6 +12,7 @@ import { ref } from "vue";
         <div class="right-form">
           <!-- 로고 -->
           <div class="login-logo"></div>
+          <span>한길</span>
           <!-- 로그인 폼 -->
           <!-- v-if를 이용해 로그인폼 / 회원가입 폼 전환 -->
           <div class="login-form">
@@ -20,11 +21,7 @@ import { ref } from "vue";
                 ID <br />
                 <input type="text" class="id" placeholder="id" /><br /><br />
                 Password <br />
-                <input
-                  type="password"
-                  class="password"
-                  placeholder="password"
-                />
+                <input type="password" class="password" placeholder="password" />
                 <br />
               </div>
               <button class="btn" @click="">
@@ -46,8 +43,7 @@ import { ref } from "vue";
 <style scoped>
 @font-face {
   font-family: "BMJUA";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff")
-    format("woff");
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff") format("woff");
   font-weight: normal;
   font-style: normal;
 }
@@ -100,9 +96,11 @@ import { ref } from "vue";
   margin: 10px 20px;
   border-radius: 15px;
   background-color: white;
+  text-align: center;
 }
 
 .login-logo {
+  display: flex;
   height: 200px;
   background-image: url("../assets/img/hangil_logo.png");
   background-size: 70%;
@@ -152,9 +150,7 @@ span {
 }
 
 .btn:active {
-  box-shadow: 4px 4px 6px 0 rgba(255, 255, 255, 0.3),
-    -4px -4px 6px 0 rgba(116, 125, 136, 0.2),
-    inset -4px -4px 6px 0 rgba(255, 255, 255, 0.2),
-    inset 4px 4px 6px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 4px 4px 6px 0 rgba(255, 255, 255, 0.3), -4px -4px 6px 0 rgba(116, 125, 136, 0.2),
+    inset -4px -4px 6px 0 rgba(255, 255, 255, 0.2), inset 4px 4px 6px 0 rgba(0, 0, 0, 0.2);
 }
 </style>
