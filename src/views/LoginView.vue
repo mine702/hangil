@@ -1,156 +1,204 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import LocomotiveScroll from "locomotive-scroll";
+import LoginForm from "../components/LoginPageCommons/forms/LoginForm.vue";
+
+gsap.registerPlugin(ScrollTrigger);
+console.log(gsap);
+const pageContainer = ref(null);
+
+onMounted(() => {
+  const scroller = new LocomotiveScroll({
+    el: pageContainer.value,
+    smooth: true,
+  });
+
+  scroller.on("scroll", ScrollTrigger.update);
+
+  ScrollTrigger.scrollerProxy(pageContainer.value, {
+    scrollTop(value) {
+      return arguments.length
+        ? scroller.scrollTo(value, 0, 0)
+        : scroller.scroll.instance.scroll.y;
+    },
+    getBoundingClientRect() {
+      return {
+        left: 0,
+        top: 0,
+        width: window.innerWidth,
+        height: window.innerHeight,
+      };
+    },
+    pinType: pageContainer.value.style.transform ? "transform" : "fixed",
+  });
+
+  let pinWrap = document.querySelector(".pin-wrap");
+  let pinWrapWidth = pinWrap.offsetWidth;
+  let horizontalScrollLength = pinWrapWidth - window.innerWidth;
+
+  gsap.to(".pin-wrap", {
+    scrollTrigger: {
+      scroller: pageContainer.value,
+      scrub: true,
+      trigger: "#sectionPin",
+      pin: true,
+      start: "top top",
+      end: pinWrapWidth,
+    },
+    x: -horizontalScrollLength,
+    ease: "none",
+  });
+  ScrollTrigger.addEventListener("refresh", () => scroller.update());
+  ScrollTrigger.refresh();
+});
 </script>
 
 <template>
-  <div class="entire">
-    <!-- 로그인 화면에서 웹 소개 부분 -->
-    <div class="content">
-      <div class="left"></div>
-      <div class="right">
-        <!-- 로고 + 로그인 폼 -->
-        <div class="right-form">
-          <!-- 로고 -->
-          <div class="login-logo"></div>
-          <span>한길</span>
-          <!-- 로그인 폼 -->
-          <!-- v-if를 이용해 로그인폼 / 회원가입 폼 전환 -->
-          <div class="login-form">
-            <form action="">
-              <div class="login-box">
-                ID <br />
-                <input type="text" class="id" placeholder="id" /><br /><br />
-                Password <br />
-                <input type="password" class="password" placeholder="password" />
-                <br />
-              </div>
-              <button class="btn" @click="">
-                <span>로그인</span>
-              </button>
-              <br />
-              <button class="btn btn-regist" @click="">
-                <span>회원가입</span>
-              </button>
-            </form>
-          </div>
-        </div>
-        <!-- 로그인 화면에서 로그인 부분 -->
+  <div class="container" ref="pageContainer">
+    <section data-bgcolor="#bcb8ad" data-textcolor="#032f35">
+      <div>
+        <img
+          src="../assets/img/hangil_logo.png"
+          style="width: 100%; height: auto"
+        />
+        <p data-scroll data-scroll-speed="2" data-scroll-delay="0.2">
+          with Hangil & SSAFY
+        </p>
       </div>
-    </div>
+    </section>
+
+    <section id="sectionPin">
+      <div class="pin-wrap">
+        <h2>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </h2>
+        <img src="../assets/img/slide1.jpg" alt="" />
+        <img src="../assets/img/slide2.jpg" alt="" />
+        <img class="lastwrapImg" src="../assets/img/slide3.jpg" alt="" />
+      </div>
+    </section>
+
+    <section
+      class="loginFormContainer"
+      data-bgcolor="#bcb8ad"
+      data-textcolor="#032f35"
+    >
+      <div>
+        <LoginForm />
+      </div>
+    </section>
   </div>
 </template>
 
-<style scoped>
-@font-face {
-  font-family: "BMJUA";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
+<style scoped lang="scss">
+@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+@import url("https://cdn.jsdelivr.net/npm/locomotive-scroll@3.5.4/dist/locomotive-scroll.css");
+
+body {
+  font-family: termina, sans-serif;
+  color: #111;
+  background: #b9b3a9;
+  transition: 0.3s ease-out;
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+  overscroll-behavior: none;
 }
-.entire {
-  width: 100vw;
+
+section:not(#sectionPin) {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-gap: 2rem;
+  padding: 50px 10vw;
+  margin: auto;
+  place-items: center;
+}
+
+img {
+  height: 80vh;
+  width: auto;
+  object-fit: cover;
+}
+
+.lastwrapImg {
+  margin-right: 400px;
+}
+
+h1 {
+  font-size: 5rem;
+  line-height: 1;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  position: absolute;
+  top: 10vw;
+  left: 10vw;
+  z-index: 4;
+  overflow-wrap: break-word;
+  hyphens: auto;
+
+  @media (max-width: 768px) {
+    font-size: 16vw;
+  }
+
+  span {
+    display: block;
+  }
+}
+
+h2 {
+  font-size: 2rem;
+  max-width: 400px;
+}
+
+.credit {
+  font-family: Termina, sans-serif;
+  a {
+    color: #111;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#sectionPin {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  left: 0;
+  background: #111;
+  color: #b9b3a9;
+}
+
+.pin-wrap {
   height: 100vh;
   display: flex;
-}
-.content {
-  display: flex;
-  width: 1280px;
-  height: 720px;
-  /* background-color: black; */
-  margin: auto;
-  font-family: "BMJUA";
-  font-size: 20px;
-  gap: 90px;
-}
-
-.left,
-.right {
-  /* 그림자 */
-  box-shadow: 5px 5px 5px 5px gray;
-  /* 테두리 윤곽 */
-  /* border: 1px solid black; */
-  border-radius: 15px;
-  background-color: white;
-}
-
-.left {
-  width: 1000px;
-  background-image: url("../assets/img/멋진사진1.jpg");
-  background-size: cover;
-  background-position: center;
-  border-radius: 15px;
-  /* 추가적으로 브라우저의 크기에 따라 이미지가 잘리지 않도록 조정할 수 있습니다 */
-  background-repeat: no-repeat;
-}
-
-.right {
-  width: 300px;
-  display: flex;
+  justify-content: flex-start;
   align-items: center;
-  flex-direction: column;
-  justify-content: center;
+  padding: 50px 10vw;
+  & > * {
+    min-width: 60vw;
+    padding: 0 5vw;
+  }
 }
-
-.right-form {
-  height: 450px;
-  margin: 10px 20px;
-  border-radius: 15px;
-  background-color: white;
-  text-align: center;
-}
-
-.login-logo {
+.loginFormContainer {
   display: flex;
-  height: 200px;
-  background-image: url("../assets/img/hangil_logo.png");
-  background-size: 70%;
-  background-position: center;
-
-  /* 추가적으로 브라우저의 크기에 따라 이미지가 잘리지 않도록 조정할 수 있습니다 */
-  background-repeat: no-repeat;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; // 높이를 뷰포트 높이의 100%로 설정
 }
 
-.login-form {
-  text-align: center;
-  margin-top: 20px;
-  height: 300px;
-  /* background-color: beige; */
-}
-
-.login-box {
-  display: grid;
-  /* grid-template-columns: max-content 1fr; */
-  column-gap: 0.5rem;
-  padding: 1.125rem 1rem;
-  background-color: #fff;
-  margin-top: 1rem;
-  border-radius: 0.5rem;
-}
-
-span {
-  font-family: BMJUA;
-}
-
-/* 버튼 디자인 */
-.btn {
-  overflow: hidden;
-  transition: all 0.3s ease;
-  top: 50%;
-  background-color: #363c5a;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  margin-top: 20px;
-  min-height: 30px;
-  min-width: 120px;
-}
-.btn:hover {
-  background: #000;
-  color: #fff;
-}
-
-.btn:active {
-  box-shadow: 4px 4px 6px 0 rgba(255, 255, 255, 0.3), -4px -4px 6px 0 rgba(116, 125, 136, 0.2),
-    inset -4px -4px 6px 0 rgba(255, 255, 255, 0.2), inset 4px 4px 6px 0 rgba(0, 0, 0, 0.2);
+p {
+  position: absolute;
+  bottom: 10vw;
+  right: 10vw;
+  width: 200px;
+  line-height: 1.5;
 }
 </style>
