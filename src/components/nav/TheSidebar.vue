@@ -6,8 +6,6 @@ import IconHome from "@/components/icons/IconHome.vue";
 import IconSearch from "@/components/icons/IconSearch.vue";
 import IconUser from "@/components/icons/IconUser.vue";
 import IconBookmark from "@/components/icons/IconBookmark.vue";
-// logo
-import logo from "@/assets/img/hangil_logo.png";
 
 export default {
   name: "Sidebar",
@@ -24,7 +22,6 @@ export default {
 <template>
   <aside class="sidebar">
     <div class="logo">
-      <img :src="logo" />
     </div>
     <nav class="navigation">
       <ul>
@@ -48,12 +45,20 @@ export default {
   height: 100vh;
   background-color: #363c5a;
   color: #fff;
-  z-index: 1000; /* 다른 요소들 위에 렌더링되도록 설정 */
+  z-index: 1000;
+  /* 다른 요소들 위에 렌더링되도록 설정 */
 }
 
 .logo {
-  /* 로고 스타일링 */
+  background-image: url("../../assets/img/hangil_logo.png");
+  background-position: center;
+  background-size: contain; /* 이미지를 요소 안에 맞추되, 비율을 유지 */
+  height: auto; /* 높이를 자동으로 설정 */
+  min-height: 15%; /* 최소 높이를 200px로 설정 */
+  background-repeat: no-repeat;
+  margin-top: 10%;
 }
+
 
 .navigation {
   /* 네비게이션 스타일링 */
@@ -63,17 +68,25 @@ export default {
   list-style-type: none;
   padding: 0;
   margin: 0;
-  display: flex; /* Flexbox 레이아웃 적용 */
-  flex-direction: column; /* 요소들을 세로로 배치 */
-  align-items: center; /* 수평 중앙 정렬 */
-  height: 100%; /* 사이드바의 전체 높이 */
-  justify-content: center; /* 수직 중앙 정렬 */
+  display: flex;
+  /* Flexbox 레이아웃 적용 */
+  flex-direction: column;
+  /* 요소들을 세로로 배치 */
+  align-items: center;
+  /* 수평 중앙 정렬 */
+  height: 100%;
+  /* 사이드바의 전체 높이 */
+  justify-content: center;
+  /* 수직 중앙 정렬 */
 }
 
 .navigation li {
-  width: 100%; /* 전체 너비 */
-  display: flex; /* Flexbox 레이아웃 적용 */
-  justify-content: center; /* 수평 중앙 정렬 */
-  margin: 20px 0; /* 아이콘 사이의 상하 간격을 10px로 설정 */
-}
-</style>
+  width: 100%;
+  /* 전체 너비 */
+  display: flex;
+  /* Flexbox 레이아웃 적용 */
+  justify-content: center;
+  /* 수평 중앙 정렬 */
+  margin: 20px 0;
+  /* 아이콘 사이의 상하 간격을 10px로 설정 */
+}</style>
