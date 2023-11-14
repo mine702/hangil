@@ -3,7 +3,9 @@ import { onMounted, ref } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import LocomotiveScroll from "locomotive-scroll";
+
 import LoginForm from "../components/LoginPageCommons/forms/LoginForm.vue";
+import BannerForm from "../components/LoginPageCommons/BannerForm.vue";
 
 gsap.registerPlugin(ScrollTrigger);
 console.log(gsap);
@@ -59,13 +61,16 @@ onMounted(() => {
   <div class="container" ref="pageContainer">
     <section data-bgcolor="#bcb8ad" data-textcolor="#032f35">
       <div>
-        <img
-          src="../assets/img/hangil_logo.png"
-          style="width: 100%; height: auto"
-        />
+        <img src="../assets/img/hangil_logo.png" style="width: 100%; height: auto" />
         <p data-scroll data-scroll-speed="2" data-scroll-delay="0.2">
           with Hangil & SSAFY
         </p>
+      </div>
+    </section>
+
+    <section data-bgcolor="#bcb8ad" data-textcolor="#032f35">
+      <div data-scroll data-scroll-speed="2" data-scroll-delay="0.2">
+        <BannerForm />
       </div>
     </section>
 
@@ -77,15 +82,11 @@ onMounted(() => {
         </h2>
         <img src="../assets/img/slide1.jpg" alt="" />
         <img src="../assets/img/slide2.jpg" alt="" />
-        <img class="lastwrapImg" src="../assets/img/slide3.jpg" alt="" />
+        <img class="lastImg" src="../assets/img/slide3.jpg" alt="" />
       </div>
     </section>
 
-    <section
-      class="loginFormContainer"
-      data-bgcolor="#bcb8ad"
-      data-textcolor="#032f35"
-    >
+    <section class="loginFormContainer" data-bgcolor="#bcb8ad" data-textcolor="#032f35">
       <div>
         <LoginForm />
       </div>
@@ -93,9 +94,10 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped >
 @import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
-@import url("https://cdn.jsdelivr.net/npm/locomotive-scroll@3.5.4/dist/locomotive-scroll.css");
+@import url("https://use.typekit.net/skn8ash.css");
+@import url("https://cdn.jsdelivr.net/npm/locomotive-scroll@3/dist/locomotive-scroll.css");
 
 body {
   font-family: termina, sans-serif;
@@ -126,8 +128,8 @@ img {
   object-fit: cover;
 }
 
-.lastwrapImg {
-  margin-right: 400px;
+.lastImg {
+  margin-right: 30%;
 }
 
 h1 {
@@ -141,14 +143,16 @@ h1 {
   z-index: 4;
   overflow-wrap: break-word;
   hyphens: auto;
+}
 
-  @media (max-width: 768px) {
+@media (max-width: 768px) {
+  h1 {
     font-size: 16vw;
   }
+}
 
-  span {
-    display: block;
-  }
+h1 span {
+  display: block;
 }
 
 h2 {
@@ -158,9 +162,10 @@ h2 {
 
 .credit {
   font-family: Termina, sans-serif;
-  a {
-    color: #111;
-  }
+}
+
+.credit a {
+  color: #111;
 }
 
 * {
@@ -182,16 +187,11 @@ h2 {
   justify-content: flex-start;
   align-items: center;
   padding: 50px 10vw;
-  & > * {
-    min-width: 60vw;
-    padding: 0 5vw;
-  }
 }
-.loginFormContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh; // 높이를 뷰포트 높이의 100%로 설정
+
+.pin-wrap>* {
+  min-width: 60vw;
+  padding: 0 5vw;
 }
 
 p {

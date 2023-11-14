@@ -13,28 +13,16 @@
               <div class="section text-center">
                 <h4 class="mb-4 pb-3" style="color: white">Log In</h4>
                 <div class="form-group">
-                  <input
-                    type="email"
-                    name="logemail"
-                    class="form-style"
-                    placeholder="Your Email"
-                    id="logemail"
-                    autocomplete="off"
-                  />
+                  <input type="email" name="logemail" class="form-style" placeholder="Your Email" id="logemail"
+                    autocomplete="off" />
                   <i class="input-icon uil uil-at"></i>
                 </div>
                 <div class="form-group mt-2">
-                  <input
-                    type="password"
-                    name="logpass"
-                    class="form-style"
-                    placeholder="Your Password"
-                    id="logpass"
-                    autocomplete="off"
-                  />
+                  <input type="password" name="logpass" class="form-style" placeholder="Your Password" id="logpass"
+                    autocomplete="off" />
                   <i class="input-icon uil uil-lock-alt"></i>
                 </div>
-                <a href="#" class="btn mt-4">submit</a>
+                <a href="#" class="btn mt-4">Login</a>
                 <p class="mb-0 mt-4 text-center">
                   <a href="#0" class="link">Forgot your password?</a>
                 </p>
@@ -46,39 +34,21 @@
               <div class="section text-center">
                 <h4 class="mb-4 pb-3" style="color: white">Sign Up</h4>
                 <div class="form-group">
-                  <input
-                    type="text"
-                    name="logname"
-                    class="form-style"
-                    placeholder="Your Full Name"
-                    id="logname"
-                    autocomplete="off"
-                  />
+                  <input type="text" name="logname" class="form-style" placeholder="Your Full Name" id="logname"
+                    autocomplete="off" />
                   <i class="input-icon uil uil-user"></i>
                 </div>
                 <div class="form-group mt-2">
-                  <input
-                    type="email"
-                    name="logemail"
-                    class="form-style"
-                    placeholder="Your Email"
-                    id="logemail"
-                    autocomplete="off"
-                  />
+                  <input type="email" name="logemail" class="form-style" placeholder="Your Email" id="logemail"
+                    autocomplete="off" />
                   <i class="input-icon uil uil-at"></i>
                 </div>
                 <div class="form-group mt-2">
-                  <input
-                    type="password"
-                    name="logpass"
-                    class="form-style"
-                    placeholder="Your Password"
-                    id="logpass"
-                    autocomplete="off"
-                  />
+                  <input type="password" name="logpass" class="form-style" placeholder="Your Password" id="logpass"
+                    autocomplete="off" />
                   <i class="input-icon uil uil-lock-alt"></i>
                 </div>
-                <a href="#" class="btn mt-4">submit</a>
+                <a href="#" class="btn mt-4">SIGN UP</a>
               </div>
             </div>
           </div>
@@ -95,43 +65,53 @@ a {
   cursor: pointer;
   transition: all 200ms linear;
 }
+
 a:hover {
   text-decoration: none;
 }
+
 .link {
   color: #c4c3ca;
 }
+
 .link:hover {
   color: #ffeba7;
 }
+
 p {
   font-weight: 500;
   font-size: 14px;
   line-height: 1.7;
 }
+
 h4 {
   font-weight: 600;
 }
+
 h6 span {
   padding: 0 20px;
   text-transform: uppercase;
   font-weight: 700;
 }
+
 .section {
   position: relative;
   width: 100%;
   display: block;
 }
+
 .full-height {
   min-height: 100vh;
 }
+
 [type="checkbox"]:checked,
 [type="checkbox"]:not(:checked) {
   position: absolute;
   left: -9999px;
 }
-.checkbox:checked + label,
-.checkbox:not(:checked) + label {
+
+.checkbox:checked+label,
+.checkbox:not(:checked)+label {
   position: relative;
   display: block;
   text-align: center;
@@ -143,8 +123,9 @@ h6 span {
   cursor: pointer;
   background-color: #ffeba7;
 }
-.checkbox:checked + label:before,
-.checkbox:not(:checked) + label:before {
+
+.checkbox:checked+label:before,
+.checkbox:not(:checked)+label:before {
   position: absolute;
   display: block;
   width: 36px;
@@ -162,7 +143,8 @@ h6 span {
   font-size: 24px;
   transition: all 0.5s ease;
 }
-.checkbox:checked + label:before {
+
+.checkbox:checked+label:before {
   transform: translateX(44px) rotate(-270deg);
 }
 
@@ -176,6 +158,7 @@ h6 span {
   perspective: 800px;
   margin-top: 60px;
 }
+
 .card-3d-wrapper {
   width: 100%;
   height: 100%;
@@ -186,6 +169,7 @@ h6 span {
   transform-style: preserve-3d;
   transition: all 600ms ease-out;
 }
+
 .card-front,
 .card-back {
   width: 100%;
@@ -206,12 +190,15 @@ h6 span {
   -o-backface-visibility: hidden;
   backface-visibility: hidden;
 }
+
 .card-back {
   transform: rotateY(180deg);
 }
-.checkbox:checked ~ .card-3d-wrap .card-3d-wrapper {
+
+.checkbox:checked~.card-3d-wrap .card-3d-wrapper {
   transform: rotateY(180deg);
 }
+
 .center-wrap {
   position: absolute;
   width: 100%;
@@ -229,6 +216,7 @@ h6 span {
   margin: 0;
   padding: 0;
 }
+
 .form-style {
   padding: 13px 20px;
   padding-left: 55px;
@@ -247,12 +235,14 @@ h6 span {
   transition: all 200ms linear;
   box-shadow: 0 4px 8px 0 rgba(21, 21, 21, 0.2);
 }
+
 .form-style:focus,
 .form-style:active {
   border: none;
   outline: none;
   box-shadow: 0 4px 8px 0 rgba(21, 21, 21, 0.2);
 }
+
 .input-icon {
   position: absolute;
   top: 0;
@@ -272,39 +262,46 @@ h6 span {
   -webkit-transition: all 200ms linear;
   transition: all 200ms linear;
 }
+
 .form-group input::-moz-placeholder {
   color: #c4c3ca;
   opacity: 0.7;
   -webkit-transition: all 200ms linear;
   transition: all 200ms linear;
 }
+
 .form-group input:-moz-placeholder {
   color: #c4c3ca;
   opacity: 0.7;
   -webkit-transition: all 200ms linear;
   transition: all 200ms linear;
 }
+
 .form-group input::-webkit-input-placeholder {
   color: #c4c3ca;
   opacity: 0.7;
   -webkit-transition: all 200ms linear;
   transition: all 200ms linear;
 }
+
 .form-group input:focus:-ms-input-placeholder {
   opacity: 0;
   -webkit-transition: all 200ms linear;
   transition: all 200ms linear;
 }
+
 .form-group input:focus::-moz-placeholder {
   opacity: 0;
   -webkit-transition: all 200ms linear;
   transition: all 200ms linear;
 }
+
 .form-group input:focus:-moz-placeholder {
   opacity: 0;
   -webkit-transition: all 200ms linear;
   transition: all 200ms linear;
 }
+
 .form-group input:focus::-webkit-input-placeholder {
   opacity: 0;
   -webkit-transition: all 200ms linear;
@@ -339,12 +336,14 @@ h6 span {
   color: #102770;
   box-shadow: 0 8px 24px 0 rgba(255, 235, 167, 0.2);
 }
+
 .btn:active,
 .btn:focus {
   background-color: #102770;
   color: #ffeba7;
   box-shadow: 0 8px 24px 0 rgba(16, 39, 112, 0.2);
 }
+
 .btn:hover {
   background-color: #102770;
   color: #ffeba7;
