@@ -1,5 +1,5 @@
 <script setup>
-import BoardCard from "../components/boards/cards/BoardCard.vue";
+import BoardCard from "./cards/BoardCard.vue";
 </script>
 
 <template>

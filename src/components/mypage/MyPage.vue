@@ -1,5 +1,5 @@
 <script setup>
-import TheSidebar from "../components/nav/TheSidebar.vue";
+import TheSidebar from "../nav/TheSidebar.vue";
 
 import { ref } from "vue";
 

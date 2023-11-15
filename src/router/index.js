@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
-import LoginView from "../views/LoginView.vue";
-import HomeView from "../views/HomeView.vue";
-import MyPageView from "../views/MyPageView.vue";
+import TheLoginView from "../views/TheLoginView.vue";
+import TheHomeView from "../views/TheHomeView.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -9,24 +9,23 @@ const router = createRouter({
       // 로그인 화면
       path: "/",
       name: "login",
-      component: LoginView,
-    },
-    {
-      // 마이 페이지
-      path: "/mypage",
-      name: "mypage",
-      component: MyPageView,
+      component: TheLoginView,
     },
     {
       path: "/home",
       name: "Home",
-      component: HomeView,
-      redirect: { name: "boardList" },
+      component: TheHomeView,
+      redirect: { name: "boardPage" },
       children: [
         {
-          path: "/boardList",
-          name: "boardList",
-          component: () => import("../views/BoardView.vue"),
+          path: "/boardPage",
+          name: "boardPage",
+          component: () => import("../components/boards/BoardPage.vue"),
+        },
+        {
+          path: "/myPage",
+          name: "myPage",
+          component: () => import("../components/mypage/MyPage.vue"),
         },
       ],
     },
