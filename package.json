@@ -15,11 +15,12 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/vue-fontawesome": "^3.0.5",
     "gsap": "^3.5.1",
+    "jquery": "^3.7.1",
     "locomotive-scroll": "^3.5.4",
-    "vue-gsap-scrolltrigger-detector": "1.0.0",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.0",
     "vue": "^3.3.4",
+    "vue-gsap-scrolltrigger-detector": "1.0.0",
     "vue-router": "^4.2.5",
     "vuetify": "^3.4.0"
   },
@@ -27,7 +28,7 @@
     "@vitejs/plugin-vue": "^4.4.0",
     "eslint": "^8.49.0",
     "eslint-plugin-vue": "^9.17.0",
-    "vite": "^4.4.11",
-    "sass": "^1.69.5"
+    "sass": "^1.69.5",
+    "vite": "^4.4.11"
   }
 }

@@ -1,5 +1,23 @@
 <script setup>
-import BoardCard from "./cards/BoardCard.vue";
+import BoardCard from "./forms/cards/BoardCard.vue";
+import $ from "jquery";
+
+$(function () {
+  var $sidebar = $(".message-form"),
+    $window = $(window),
+    offset = $sidebar.offset();
+  $window.scroll(function () {
+    if ($window.scrollTop() > offset.top) {
+      $sidebar.stop().animate({
+        marginTop: $window.scrollTop() + 15,
+      });
+    } else {
+      $sidebar.stop().animate({
+        marginTop: 0,
+      });
+    }
+  });
+});
 </script>
 
 <template>
@@ -42,7 +60,6 @@ import BoardCard from "./cards/BoardCard.vue";
 }
 
 .message-form {
-  position: sticky;
   top: 40px;
   max-width: calc(30% - 20px); /* 최대 폼 너비 설정 */
 }

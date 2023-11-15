@@ -1,92 +1,87 @@
-<script>
-import { RouterLink, useRouter } from "vue-router";
+<script setup>
+import { ref, defineEmits } from "vue";
 
-// icons
-import IconHome from "@/components/icons/IconHome.vue";
-import IconSearch from "@/components/icons/IconSearch.vue";
-import IconUser from "@/components/icons/IconUser.vue";
-import IconBookmark from "@/components/icons/IconBookmark.vue";
+const isExpanded = ref(false);
+const emit = defineEmits(["update:expanded"]);
 
-export default {
-  name: "Sidebar",
-  components: {
-    IconHome,
-    IconSearch,
-    IconUser,
-    IconBookmark,
-    RouterLink,
-  },
-};
+function toggleSidebar(expand) {
+  isExpanded.value = expand;
+  emit("update:expanded", isExpanded.value);
+}
 </script>
 
 <template>
-  <aside class="sidebar">
-    <div class="logo">
-    </div>
-    <nav class="navigation">
-      <ul>
-        <li><icon-home /></li>
-        <li><icon-search /></li>
-        <li><icon-user /></li>
-        <li><icon-bookmark /></li>
-        <!-- 기타 링크 추가 -->
-      </ul>
-    </nav>
-    <!-- 여기에 추가적인 사이드바 콘텐츠가 있을 수 있습니다 -->
-  </aside>
+  <ul
+    class="side-menu"
+    @mouseenter="() => toggleSidebar(true)"
+    @mouseleave="() => toggleSidebar(false)"
+  >
+    <li>
+      <a href="#"><span class="fa fa-code"></span>Superguide</a>
+    </li>
+    <li>
+      <a href="#"><span class="fa fa-cog"></span>Instalação e Dependências</a>
+    </li>
+    <li>
+      <a href="#"><span class="fa fa-font"></span>Tipografia</a>
+    </li>
+    <li>
+      <a href="#"><span class="fa fa-caret-square-o-right"></span>Botões</a>
+    </li>
+    <li>
+      <a href="#"><span class="fa fa-check-square"></span>Formulários</a>
+    </li>
+    <li>
+      <a href="#"><span class="fa fa-square"></span>Cards</a>
+    </li>
+    <li>
+      <a href="#"><span class="fa fa-bars"></span>Menu</a>
+    </li>
+  </ul>
 </template>
 
-<style>
-.sidebar {
+<style scoped>
+@import "https://fonts.googleapis.com/css?family=Roboto";
+@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css");
+.side-menu {
+  font-family: "Roboto", sans-serif;
   position: fixed;
   top: 0;
   left: 0;
-  width: 120px;
-  height: 100vh;
-  background-color: #363c5a;
-  color: #fff;
-  z-index: 1000;
-  /* 다른 요소들 위에 렌더링되도록 설정 */
-}
-
-.logo {
-  background-image: url("../../assets/img/hangil_logo.png");
-  background-position: center;
-  background-size: contain; /* 이미지를 요소 안에 맞추되, 비율을 유지 */
-  height: auto; /* 높이를 자동으로 설정 */
-  min-height: 15%; /* 최소 높이를 200px로 설정 */
-  background-repeat: no-repeat;
-  margin-top: 10%;
-}
-
-
-.navigation {
-  /* 네비게이션 스타일링 */
-}
-
-.navigation ul {
-  list-style-type: none;
-  padding: 0;
   margin: 0;
-  display: flex;
-  /* Flexbox 레이아웃 적용 */
-  flex-direction: column;
-  /* 요소들을 세로로 배치 */
-  align-items: center;
-  /* 수평 중앙 정렬 */
+  padding: 0;
   height: 100%;
-  /* 사이드바의 전체 높이 */
-  justify-content: center;
-  /* 수직 중앙 정렬 */
+  width: 60px;
+  list-style-type: none;
+  background: #363c5a;
+  overflow: hidden;
+  transition: width 0.3s;
 }
 
-.navigation li {
-  width: 100%;
-  /* 전체 너비 */
-  display: flex;
-  /* Flexbox 레이아웃 적용 */
-  justify-content: center;
-  /* 수평 중앙 정렬 */
-  margin: 20px 0;
-  /* 아이콘 사이의 상하 간격을 10px로 설정 */
-}</style>
+.side-menu:hover {
+  width: 300px;
+}
+
+.side-menu li {
+  width: 300px;
+}
+
+.side-menu li span {
+  font-size: 1rem;
+  margin: 20px 30px 0 22px;
+}
+
+.side-menu li a {
+  display: block;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: #fff;
+  height: 60px;
+}
+
+.side-menu li a:hover,
+.side-menu li:first-child a {
+  background: #14081d;
+  display: block;
+}
+</style>
