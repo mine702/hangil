@@ -1,5 +1,4 @@
 <script setup>
-import TheSidebar from "../nav/TheSidebar.vue";
 
 import { ref } from "vue";
 
@@ -28,7 +27,6 @@ function closeModalPost(event) {
 </script>
 
 <template>
-  <TheSidebar></TheSidebar>
   <div class="my-page">
     <!-- 개인 정보 div -->
     <div class="user-info">
@@ -71,11 +69,7 @@ function closeModalPost(event) {
     <div class="user-board">
       <span>Posts</span>
       <div>
-        <img
-          src="../assets/img/멋진사진1.jpg"
-          alt=""
-          @click="openModalPost('@/assets/img/멋진사진1.jpg')"
-        />
+        <img src="../assets/img/멋진사진1.jpg" alt="" @click="openModalPost('@/assets/img/멋진사진1.jpg')" />
         <img src="../assets/img/멋진사진2.jpg" alt="" />
         <img src="../assets/img/멋진사진3.jpg" alt="" />
         <img src="../assets/img/멋진사진4.jpg" alt="" />
@@ -110,6 +104,7 @@ function closeModalPost(event) {
 }
 
 @media (max-width: 1200px) {
+
   /* 화면 크기가 768px 이하일 때 적용 */
   .sidebar {
     display: none;
@@ -145,7 +140,8 @@ span {
   -webkit-transition: 0.5s ease-in-out;
   transition: 0.5s ease-in-out;
 
-  cursor: pointer; /* 이미지에 마우스 오버 시 커서 변경 */
+  cursor: pointer;
+  /* 이미지에 마우스 오버 시 커서 변경 */
 }
 
 .user-profile img:hover {
@@ -183,7 +179,8 @@ span {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* 배경 흐림 효과 */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* 배경 흐림 효과 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -279,7 +276,8 @@ span {
 }
 
 .modal-content-post img {
-  width: 80%; /* 이미지 크기 조정 */
+  width: 80%;
+  /* 이미지 크기 조정 */
   height: 90%;
   margin-bottom: 20px;
 }

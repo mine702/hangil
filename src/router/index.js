@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import TheLoginView from "../views/TheLoginView.vue";
 import TheHomeView from "../views/TheHomeView.vue";
-import modalCard from "../components/commons/modalCard.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -9,7 +8,7 @@ const router = createRouter({
       // 로그인 화면
       path: "/",
       name: "login",
-      component: modalCard,
+      component: TheLoginView,
     },
     {
       path: "/home",
@@ -26,6 +25,11 @@ const router = createRouter({
           path: "/myPage",
           name: "myPage",
           component: () => import("../components/mypage/MyPage.vue"),
+        },
+        {
+          path: "/searchPage",
+          name: "searchPage",
+          component: () => import("../components/searchs/SearchPage.vue"),
         },
       ],
     },
