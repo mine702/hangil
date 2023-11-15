@@ -9,7 +9,7 @@ $(function () {
   $window.scroll(function () {
     if ($window.scrollTop() > offset.top) {
       $sidebar.stop().animate({
-        marginTop: $window.scrollTop() + 15,
+        marginTop: $window.scrollTop() + 30,
       });
     } else {
       $sidebar.stop().animate({
@@ -43,6 +43,7 @@ $(function () {
   margin-top: 3%;
   margin-left: 15%; /* sidebar 너비만큼 여백 설정 */
   margin-right: 5%;
+  margin-bottom: 3%;
 }
 
 .board-form,
