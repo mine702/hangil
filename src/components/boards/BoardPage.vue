@@ -1,7 +1,6 @@
 <script setup>
-import BoardCard from "./forms/cards/BoardCard.vue";
 import $ from "jquery";
-
+import CommonCard from "../commons/CommonCard.vue";
 $(function () {
   var $sidebar = $(".message-form"),
     $window = $(window),
@@ -24,9 +23,9 @@ $(function () {
   <div class="forms-container">
     <div class="board-form">
       <!-- 폼 내용 -->
-      <board-card />
-      <board-card />
-      <board-card />
+      <CommonCard />
+      <CommonCard />
+      <CommonCard />
     </div>
     <div class="message-form">
       <!-- 폼 내용 -->
@@ -55,6 +54,10 @@ $(function () {
   max-width: 200px;
   background-color: white;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.3);
+  color: #626567;
 }
 
 .board-form {
@@ -73,12 +76,9 @@ $(function () {
 }
 .board-form:hover,
 .message-form:hover {
-  /* 입체감을 주기 위해 그림자를 추가합니다. */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  /* 요소가 약간 튀어나온 것처럼 보이게 합니다. */
-  transform: translateY(-5px);
-  /* 부드러운 전환 효과 */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+  /* 약간 위로 떠오르는 듯한 효과 */
+  transform: translateY(-3px);
 }
 
 /* 기타 스타일 */

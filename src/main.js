@@ -4,27 +4,6 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 
-/* import the fontawesome core */
-// import { library } from "@fortawesome/fontawesome-svg-core";
-// import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-// import {
-//   faUserSecret,
-//   faHouse,
-//   faMagnifyingGlass,
-//   faUser,
-//   faBookmark,
-//   faHeart,
-// } from "@fortawesome/free-solid-svg-icons";
-
-// library.add(
-//   faUserSecret,
-//   faHouse,
-//   faMagnifyingGlass,
-//   faUser,
-//   faBookmark,
-//   faHeart
-// );
-
 // css
 import "./assets/css/main.css";
 

@@ -20,27 +20,38 @@ function toggleSidebar(expand) {
       <a href="#"></a>
     </li>
     <li>
-      <a href="#"><span class="fa fa-cog"></span>Home</a>
+      <router-link :to="'/home'">
+        <span class="fa fa-home" aria-hidden="true"></span>Home
+      </router-link>
     </li>
     <li>
-      <a href="#"><span class="fa fa-font"></span>MyPage</a>
+      <router-link :to="'/mypage'">
+        <span class="fa fa-user-o" aria-hidden="true"></span>MyPage
+      </router-link>
+    </li>
+
+    <li>
+      <router-link :to="'/searchpage'">
+        <span class="fa fa-search" aria-hidden="true"></span>Search
+      </router-link>
     </li>
     <li>
-      <a href="#"><span class="fa fa-caret-square-o-right"></span>Search</a>
+      <router-link :to="'/myPlans'">
+        <span class="fa fa-paper-plane" aria-hidden="true"></span>Plans
+      </router-link>
     </li>
     <li>
-      <a href="#"><span class="fa fa-check-square"></span>Plans</a>
-    </li>
-    <li>
-      <a href="#"><span class="fa fa-check-square"></span>LogOut</a>
+      <router-link :to="'/searchpage'">
+        <span class="fa fa-sign-out" aria-hidden="true"></span>LogOut
+      </router-link>
     </li>
   </ul>
   <div class="fixed-logo"></div>
 </template>
 
 <style scoped>
-@import "https://fonts.googleapis.com/css?family=Roboto";
-@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css");
+@import url("https://fonts.googleapis.com/css?family=Roboto");
+@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
 .side-menu {
   font-family: "Roboto", sans-serif;
   position: fixed;
@@ -57,6 +68,7 @@ function toggleSidebar(expand) {
 }
 
 .fixed-logo {
+  border: 2px solid black;
   position: fixed; /* 스크롤해도 항상 같은 위치에 있음 */
   right: 0;
   top: 3%; /* 상단에서의 위치, 필요에 따라 조정 */
@@ -77,7 +89,7 @@ function toggleSidebar(expand) {
 }
 
 .side-menu li {
-  width: 300px;
+  width: 200px;
 }
 
 .side-menu li span {
@@ -93,8 +105,7 @@ function toggleSidebar(expand) {
   height: 60px;
 }
 
-.side-menu li a:hover,
-.side-menu li:first-child a {
+.side-menu li a:hover {
   background: #14081d;
   display: block;
 }
