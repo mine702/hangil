@@ -17,27 +17,25 @@ function toggleSidebar(expand) {
     @mouseleave="() => toggleSidebar(false)"
   >
     <li>
-      <a href="#"><span class="fa fa-code"></span>Superguide</a>
+      <a href="#"></a>
     </li>
     <li>
-      <a href="#"><span class="fa fa-cog"></span>Instalação e Dependências</a>
+      <a href="#"><span class="fa fa-cog"></span>Home</a>
     </li>
     <li>
-      <a href="#"><span class="fa fa-font"></span>Tipografia</a>
+      <a href="#"><span class="fa fa-font"></span>MyPage</a>
     </li>
     <li>
-      <a href="#"><span class="fa fa-caret-square-o-right"></span>Botões</a>
+      <a href="#"><span class="fa fa-caret-square-o-right"></span>Search</a>
     </li>
     <li>
-      <a href="#"><span class="fa fa-check-square"></span>Formulários</a>
+      <a href="#"><span class="fa fa-check-square"></span>Plans</a>
     </li>
     <li>
-      <a href="#"><span class="fa fa-square"></span>Cards</a>
-    </li>
-    <li>
-      <a href="#"><span class="fa fa-bars"></span>Menu</a>
+      <a href="#"><span class="fa fa-check-square"></span>LogOut</a>
     </li>
   </ul>
+  <div class="fixed-logo"></div>
 </template>
 
 <style scoped>
@@ -58,8 +56,24 @@ function toggleSidebar(expand) {
   transition: width 0.3s;
 }
 
+.fixed-logo {
+  position: fixed; /* 스크롤해도 항상 같은 위치에 있음 */
+  right: 0;
+  top: 3%; /* 상단에서의 위치, 필요에 따라 조정 */
+  right: 10px; /* 오른쪽에서의 위치, 필요에 따라 조정 */
+  width: 150px; /* 로고의 너비, 로고의 실제 크기에 맞게 조정 */
+  height: 100px; /* 로고의 높이, 로고의 실제 크기에 맞게 조정 */
+  border-radius: 10px; /* 모서리를 둥글게 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* 3D 효과를 위한 그림자 */
+  z-index: 1000; /* 다른 요소들 위에 표시됨 */
+  background-image: url("../../assets/img/hangil_logo2.png");
+  background-position: center;
+  background-size: contain;
+  background-color: white;
+}
+
 .side-menu:hover {
-  width: 300px;
+  width: 200px;
 }
 
 .side-menu li {
@@ -67,7 +81,7 @@ function toggleSidebar(expand) {
 }
 
 .side-menu li span {
-  font-size: 1rem;
+  font-size: 1.2rem;
   margin: 20px 30px 0 22px;
 }
 

@@ -41,7 +41,7 @@ $(function () {
   gap: 5%; /* 폼 사이의 간격 */
   align-items: flex-start;
   margin-top: 3%;
-  margin-left: 15%; /* sidebar 너비만큼 여백 설정 */
+  margin-left: 20%; /* sidebar 너비만큼 여백 설정 */
   margin-right: 5%;
   margin-bottom: 3%;
 }
@@ -54,6 +54,7 @@ $(function () {
   min-width: 200px; /* 최소 폼 너비 설정 */
   max-width: 200px;
   background-color: white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .board-form {
@@ -69,6 +70,15 @@ $(function () {
   .forms-container {
     margin-left: 0; /* 더 작은 화면에서 sidebar 여백 제거 */
   }
+}
+.board-form:hover,
+.message-form:hover {
+  /* 입체감을 주기 위해 그림자를 추가합니다. */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  /* 요소가 약간 튀어나온 것처럼 보이게 합니다. */
+  transform: translateY(-5px);
+  /* 부드러운 전환 효과 */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* 기타 스타일 */
