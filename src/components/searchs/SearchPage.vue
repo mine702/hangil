@@ -20,7 +20,9 @@ import modalCard from "./forms/cards/modalCard.vue";
         </div>
       </form>
     </div>
-    <modalCard />
+    <div class="searchResult">
+      <modalCard />
+    </div>
   </div>
 </template>
 
@@ -46,6 +48,11 @@ import modalCard from "./forms/cards/modalCard.vue";
   /* 전체 화면 높이를 사용 */
 }
 
+.searchResult {
+  max-width: 70%;
+  max-height: 80%;
+  margin-bottom: 5%;
+}
 .tb {
   display: table;
   width: 100%;
@@ -67,13 +74,9 @@ button {
 }
 
 #cover {
-  position: absolute;
-  top: 40%;
-  left: 0;
-  right: 0;
   width: 550px;
   padding: 35px;
-  margin: -83px auto 0 auto;
+  margin-top: 10%;
   background-color: #363c5a;
   border-radius: 20px;
   box-shadow: 0 10px 40px #363c5a, 0 0 0 20px #ffffffeb;
