@@ -1,7 +1,20 @@
-<script setup></script>
+<script setup>
+import { ref, defineEmits } from "vue";
+
+const isModalVisible = ref(false); // 모달 표시 상태
+
+const emits = defineEmits(["openModal"]);
+
+const handleCardClick = () => {
+  isModalVisible.value = true; // 모달 표시 상태 토글
+  emits("openModal", {
+    /* 필요한 데이터를 여기에 전달할 수 있습니다 */
+  });
+};
+</script>
 
 <template>
-  <article class="card">
+  <div class="card" @click="handleCardClick">
     <div class="card__info-hover">
       <svg class="card__like" viewBox="0 0 24 24">
         <path
@@ -30,7 +43,8 @@
         <a href="#" class="card__author" title="author">Celeste Mills</a>
       </span>
     </div>
-  </article>
+  </div>
+  <!-- 모달, isModalVisible이 true일 때만 표시 -->
 </template>
 
 <style scoped>
