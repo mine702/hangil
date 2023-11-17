@@ -13,12 +13,12 @@
               <div class="section text-center">
                 <h4 class="mb-4 pb-3" style="color: white">Log In</h4>
                 <div class="form-group">
-                  <input type="email" name="logemail" class="form-style" placeholder="Your Email" id="logemail"
+                  <input type="email" name="loginEmail" class="form-style" placeholder="Your Email" id="loginEmail"
                     autocomplete="off" />
                   <i class="input-icon uil uil-at"></i>
                 </div>
                 <div class="form-group mt-2">
-                  <input type="password" name="logpass" class="form-style" placeholder="Your Password" id="logpass"
+                  <input type="password" name="loginPass" class="form-style" placeholder="Your Password" id="loginPass"
                     autocomplete="off" />
                   <i class="input-icon uil uil-lock-alt"></i>
                 </div>
@@ -34,17 +34,17 @@
               <div class="section text-center">
                 <h4 class="mb-4 pb-3" style="color: white">Sign Up</h4>
                 <div class="form-group">
-                  <input type="text" name="logname" class="form-style" placeholder="Your Full Name" id="logname"
+                  <input type="text" name="SignName" class="form-style" placeholder="Your Full Name" id="SignName"
                     autocomplete="off" />
                   <i class="input-icon uil uil-user"></i>
                 </div>
                 <div class="form-group mt-2">
-                  <input type="email" name="logemail" class="form-style" placeholder="Your Email" id="logemail"
+                  <input type="email" name="SignEmail" class="form-style" placeholder="Your Email" id="SignEmail"
                     autocomplete="off" />
                   <i class="input-icon uil uil-at"></i>
                 </div>
                 <div class="form-group mt-2">
-                  <input type="password" name="logpass" class="form-style" placeholder="Your Password" id="logpass"
+                  <input type="password" name="SignPass" class="form-style" placeholder="Your Password" id="SignPass"
                     autocomplete="off" />
                   <i class="input-icon uil uil-lock-alt"></i>
                 </div>

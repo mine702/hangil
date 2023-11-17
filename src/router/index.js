@@ -14,12 +14,26 @@ const router = createRouter({
       path: "/home",
       name: "Home",
       component: TheHomeView,
-      redirect: { name: "boardPage" },
+      redirect: { name: "boardView" },
       children: [
         {
-          path: "/boardPage",
-          name: "boardPage",
-          component: () => import("../components/boards/BoardPage.vue"),
+          path: "/boardView",
+          name: "boardView",
+          component: () => import("../views/TheBoardView.vue"),
+          redirect: { name: "boardPage" },
+          children: [
+            {
+              path: "/boardPage",
+              name: "boardPage",
+              component: () => import("../components/boards/BoardPage.vue"),
+            },
+            {
+              path: "/boardRegister",
+              name: "boardRegister",
+              component: () =>
+                import("../components/boards/BoardRegisterPage.vue"),
+            },
+          ],
         },
         {
           path: "/myPage",

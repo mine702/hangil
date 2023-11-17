@@ -8,7 +8,6 @@ import LoginForm from "../components/LoginPageCommons/forms/LoginForm.vue";
 import BannerForm from "../components/LoginPageCommons/BannerForm.vue";
 
 gsap.registerPlugin(ScrollTrigger);
-console.log(gsap);
 const pageContainer = ref(null);
 
 onMounted(() => {
