@@ -4,31 +4,31 @@ import router from "../../router";
 
 let items = ref([
   {
-    title: "Paris",
+    title: "Daejoen",
     num: "1",
     imgSrc:
       "https://media.istockphoto.com/id/949299844/it/foto/vista-prospettica-dellesterno-delledificio-contemporaneo.jpg?s=612x612&w=0&k=20&c=_DR1aRHuTEV3EYBJo1ZXq1pF4SgwB9EVWQLaBj4sC5g=",
   },
   {
-    title: "Warsaw",
+    title: "Seoul",
     num: "2",
     imgSrc:
       "https://media.istockphoto.com/id/1150545984/it/foto/palazzo-moderno-di-lusso-con-piscina.jpg?s=612x612&w=0&k=20&c=Pbrai_VGc9tUviMCF1UaBErdS1YGyIVWsD29jzMZwTY=",
   },
   {
-    title: "Madrid",
+    title: "Busan",
     num: "3",
     imgSrc:
       "https://media.istockphoto.com/id/1214351345/it/foto/guardando-direttamente-lo-skyline-del-quartiere-finanziario-nel-centro-di-londra-immagine-di.jpg?s=612x612&w=0&k=20&c=oNNbPzPvcQ-4RA6AeatNIxHQIafBiXmDRtUUY0Ska-I=",
   },
   {
-    title: "Sydney",
+    title: "Jeju",
     num: "4",
     imgSrc:
       "https://media.istockphoto.com/id/904390980/it/foto/foto-di-architettura-contemporanea-astratta.jpg?s=612x612&w=0&k=20&c=_P4Wmx5nq5MeDuimpNklKCBlrLovmCyd9lfiMKeJZDs=",
   },
   {
-    title: "Sydney",
+    title: "Japan",
     num: "4",
     imgSrc:
       "https://media.istockphoto.com/id/904390980/it/foto/foto-di-architettura-contemporanea-astratta.jpg?s=612x612&w=0&k=20&c=_P4Wmx5nq5MeDuimpNklKCBlrLovmCyd9lfiMKeJZDs=",
@@ -50,7 +50,7 @@ let nowIdx = ref(0);
 
 const handleItemClick = (index) => {
   if (index === nowIdx.value) {
-    router.push({ path: "home" });
+    router.push({ path: "PlanPage" });
     console.log("작동완료!!!!");
   } else {
     progress.value = (index / items.value.length) * 100 + 10;
@@ -93,7 +93,8 @@ const handleMouseMove = (event) => {
 
 const handleMouseDown = (event) => {
   isDown.value = true;
-  startX.value = event.clientX || (event.touches && event.touches[0].clientX) || 0;
+  startX.value =
+    event.clientX || (event.touches && event.touches[0].clientX) || 0;
 };
 
 const handleMouseUp = () => {
@@ -143,6 +144,8 @@ template {
 }
 
 .carousel {
+  width: 90%;
+  margin-left: 4%;
   position: relative;
   z-index: 1;
   height: 100vh;

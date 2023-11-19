@@ -93,6 +93,7 @@ const emit = defineEmits(["closeModal"]);
   background-color: rgb(204, 200, 200);
 }
 .modal-btn {
+  font-size: 16px;
   cursor: pointer;
 }
 </style>
