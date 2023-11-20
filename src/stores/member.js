@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { jwtDecode } from "jwt-decode";
-import { userConfirm, findById, tokenRegeneration, logout } from "@/api/user";
+import { userConfirm, findById, tokenRegeneration, logout, userJoin, userModify } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
 
 export const useMemberStore = defineStore(
@@ -32,6 +32,50 @@ export const useMemberStore = defineStore(
             isLogin.value = false;
             isLoginError.value = true;
             isValidToken.value = false;
+          }
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    };
+
+    const userRegist = async (registerUser) => {
+      await userJoin(
+        registerUser,
+        (response) => {
+          console.log("회원가입 메서드 호출");
+          console.log(response);
+          console.log(httpStatusCode.ACCEPT);
+          // 회원가입 성공
+          if (response.status === httpStatusCode.ACCEPT) {
+            console.log("회원가입 성공!!");
+          }
+          // 회원가입 실패(중복 체크 등)
+          else {
+            console.log("회원가입 실패ㅠㅠ");
+          }
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    };
+
+    const userUpdate = async (updateUserInfo) => {
+      await userModify(
+        updateUserInfo,
+        (response) => {
+          console.log("유저 정보 업데이트 메서드 호출");
+          console.log(response);
+          console.log(httpStatusCode.ACCEPT);
+          // 정보수정 성공
+          if (response.status === httpStatusCode.ACCEPT) {
+            console.log("정보수정 성공!!");
+          }
+          // 정보수정 실패
+          else {
+            console.log("정보수정 실패ㅠㅠ");
           }
         },
         (error) => {
@@ -129,6 +173,8 @@ export const useMemberStore = defineStore(
       getUserInfo,
       tokenRegenerate,
       userLogout,
+      userRegist,
+      userUpdate,
     };
   },
   {

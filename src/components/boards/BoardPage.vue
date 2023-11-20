@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 
 import $ from "jquery";
 import CommonCard from "../commons/CommonCard.vue";
@@ -28,8 +28,6 @@ $(function () {
     }
   });
 });
-
-
 </script>
 
 <template>
@@ -114,8 +112,7 @@ $(function () {
   /* 상단에서 50% 위치 */
   left: 50%;
   /* 좌측에서 50% 위치 */
-  transform: translate(-50%,
-      -50%);
+  transform: translate(-50%, -50%);
   /* 중앙 정렬을 위해 자신의 크기의 반만큼 이동 */
   z-index: 1001;
   /* 다른 요소들보다 위에 표시되도록 z-index 설정 */

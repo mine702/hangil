@@ -8,10 +8,19 @@ const router = useRouter();
 
 const memberStore = useMemberStore();
 const { isLogin } = storeToRefs(memberStore);
-const { userLogin, getUserInfo } = memberStore;
+const { userLogin, getUserInfo, userRegist } = memberStore;
+const checkbox = ref(null);
+
 const loginUser = ref({
-  userId: "",
-  userPw: "",
+  userId: null,
+  userPw: null,
+});
+
+const registerUser = ref({
+  userId: null,
+  userPw: null,
+  userName: null,
+  userNickname: null,
 });
 
 const login = async () => {
@@ -22,13 +31,19 @@ const login = async () => {
     router.push("/home");
   }
 };
+
+const signUp = async () => {
+  await userRegist(registerUser.value);
+  checkbox.value.checked = false;
+};
+
 </script>
 
 <template>
   <div class="col-12 text-center align-self-center py-5">
     <div class="section pb-5 pt-5 pt-sm-2 text-center">
       <h6 class="mb-0 pb-3"><span>Log In </span><span>Sign Up</span></h6>
-      <input class="checkbox" type="checkbox" id="reg-log" name="reg-log" />
+      <input class="checkbox" type="checkbox" id="reg-log" name="reg-log" ref="checkbox" />
       <label for="reg-log"></label>
       <div class="card-3d-wrap mx-auto">
         <div class="card-3d-wrapper">
@@ -46,7 +61,7 @@ const login = async () => {
                     autocomplete="off"
                     v-model="loginUser.userId"
                   />
-                  <i class="input-icon uil uil-at"></i>
+                  <i class="input-icon uil uil-edit"></i>
                 </div>
                 <div class="form-group mt-2">
                   <input
@@ -71,27 +86,18 @@ const login = async () => {
             <div class="center-wrap">
               <div class="section text-center">
                 <h4 class="mb-4 pb-3" style="color: white">Sign Up</h4>
-                <div class="form-group">
-                  <input
-                    type="text"
-                    name="SignName"
-                    class="form-style"
-                    placeholder="Your Full Name"
-                    id="SignName"
-                    autocomplete="off"
-                  />
-                  <i class="input-icon uil uil-user"></i>
-                </div>
+
                 <div class="form-group mt-2">
                   <input
                     type="text"
                     name="SignId"
                     class="form-style"
-                    placeholder="Your Id"
+                    placeholder="Your ID"
                     id="SignId"
                     autocomplete="off"
+                    v-model="registerUser.userId"
                   />
-                  <i class="input-icon uil uil-at"></i>
+                  <i class="input-icon uil uil-edit"></i>
                 </div>
                 <div class="form-group mt-2">
                   <input
@@ -101,10 +107,36 @@ const login = async () => {
                     placeholder="Your Password"
                     id="SignPass"
                     autocomplete="off"
+                    v-model="registerUser.userPw"
                   />
                   <i class="input-icon uil uil-lock-alt"></i>
                 </div>
-                <a href="#" class="btn mt-4">SIGN UP</a>
+                <div class="form-group mt-2">
+                  <input
+                    type="text"
+                    name="SignName"
+                    class="form-style"
+                    placeholder="Your Name"
+                    id="SignName"
+                    autocomplete="off"
+                    v-model="registerUser.userName"
+                  />
+                  <i class="input-icon uil uil-user"></i>
+                </div>
+                <div class="form-group mt-2">
+                  <input
+                    type="text"
+                    name="SignNickName"
+                    class="form-style"
+                    placeholder="Your NickName"
+                    id="SignNickName"
+                    autocomplete="off"
+                    v-model="registerUser.userNickname"
+                  />
+                  <i class="input-icon uil uil-facebook-messenger-alt"></i>
+                </div>
+
+                <a href="#" class="btn mt-4" @click.prevent="signUp">Sign Up</a>
               </div>
             </div>
           </div>
@@ -120,9 +152,6 @@ const login = async () => {
 a {
   cursor: pointer;
   transition: all 200ms linear;
-}
-
-a:hover {
   text-decoration: none;
 }
 
@@ -301,8 +330,8 @@ h6 span {
 
 .input-icon {
   position: absolute;
-  top: 0;
-  left: 18px;
+  top: 1px;
+  left: 12px;
   height: 48px;
   font-size: 24px;
   line-height: 48px;

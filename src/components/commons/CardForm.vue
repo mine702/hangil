@@ -1,9 +1,9 @@
 <script setup>
 import { ref } from "vue";
-import ModalForm from "./ModalForm.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
 import "swiper/bundle";
+import CommonCard from "../commons/CommonCard.vue";
 import CardModal from "../commons/modal/CardModal.vue";
 
 const isModalVisible = ref(false); // 모달 표시 상태
@@ -37,6 +37,8 @@ let posts = ref([
       "https://img.freepik.com/free-photo/aerial-beautiful-shot-of-a-seashore-with-hills-on-the-background-at-sunset_181624-24143.jpg?size=626&ext=jpg&ga=GA1.1.89001508.1698988307&semt=ais",
   },
 ]);
+
+
 </script>
 
 <template>
@@ -55,12 +57,12 @@ let posts = ref([
       <div class="swiper-button-prev">&lt;</div>
       <div class="swiper-button-next">&gt;</div>
       <SwiperSlide v-for="post in posts" :key="post.id">
-        <div class="post-card">
-          <div class="post-title">{{ post.title }}</div>
+        <CommonCard class="post-card" @click="handleCardClick">
+          <!-- <div class="post-title">{{ post.title }}</div>
           <div class="post-picture">
             <img :src="post.image" alt="" @click="handleCardClick" />
-          </div>
-        </div>
+          </div> -->
+        </CommonCard>
       </SwiperSlide>
     </Swiper>
     <transition name="modal">
@@ -91,8 +93,8 @@ let posts = ref([
 .post-card {
   flex: 0 0 calc(33.3333% - 20px); /* 슬라이드 당 이미지의 너비를 계산 */
   margin: 0 5px; /* 이미지 사이 간격 */
-  width: 90%;
-  height: 100%;
+  width: 70%;
+  height: 350px;
   text-align: center;
   background-color: rgb(215, 230, 246);
 }
@@ -106,7 +108,7 @@ let posts = ref([
 
 .post-picture img {
   width: 300px;
-  height: 200px; /* 이미지 비율 유지 */
+  height: 200px;
 }
 
 .swiper-button-prev {

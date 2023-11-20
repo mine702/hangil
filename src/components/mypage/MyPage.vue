@@ -2,7 +2,6 @@
 import { ref } from "vue";
 import UserInfo from "./UserInfo.vue";
 import CardForm from "../commons/CardForm.vue";
-import UserPicks from "./UserPicks.vue";
 
 // 유저 정보 수정 모달
 const showModalProfile = ref(false);

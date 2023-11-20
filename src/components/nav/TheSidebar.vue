@@ -1,7 +1,6 @@
 <script setup>
 import { ref, defineEmits, onMounted } from "vue";
 import { useMemberStore } from "@/stores/member";
-import UserInfo from "../mypage/UserInfo.vue";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 

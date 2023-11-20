@@ -1,11 +1,45 @@
 <script setup>
 import { ref } from "vue";
-
+import { useMemberStore } from "@/stores/member";
+// 모달 이벤트
 const showModalProfile = ref(false);
-
 const closeModalProfile = (event) => {
   if (event.target.classList.contains("modal-profile")) {
     showModalProfile.value = false;
+  }
+};
+
+// 프로필 사진 수정
+const profileImage = ref("/profile.png"); // 초기 이미지 경로
+const fileInput = ref(null);
+const triggerFileInput = () => {
+  fileInput.value.click();
+};
+
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file && file.type.startsWith("image/")) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      profileImage.value = e.target.result; // 업로드한 이미지로 변경
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+const memberStore = useMemberStore();
+const { userUpdate } = memberStore;
+
+// 프로필 업데이트
+const updateUserInfo = ref({
+  userPw: null,
+  userNickname: null,
+});
+
+const update = async () => {
+  let token = sessionStorage.getItem("accessToken");
+  if (token !== null) {
+    await userUpdate(updateUserInfo.value);
   }
 };
 </script>
@@ -13,7 +47,7 @@ const closeModalProfile = (event) => {
 <template>
   <div class="user-profile">
     <div class="profile-container" @click="showModalProfile = true">
-      <img src="@/assets/img/profile.png" alt="" />
+      <img :src="profileImage" alt="" />
       <div class="profile-text" style="font-size: 25px">Account</div>
       <div class="user-simple-info"></div>
     </div>
@@ -25,28 +59,28 @@ const closeModalProfile = (event) => {
       <form class="modal-form">
         <!-- 사용자 프로필 사진 수정 -->
         <div class="user-profile-picture">
-          <img src="@/assets/img/profile.png" alt="" />
-          <div>
-            <span style="font-size: 20px">사진 변경</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="username">이름:</label>
-          <input type="text" id="username" name="username" />
+          <img :src="profileImage" alt="" @click="triggerFileInput" />
+          <input
+            type="file"
+            id="file-input"
+            ref="fileInput"
+            style="display: none"
+            @change="handleFileChange"
+          />
         </div>
         <div class="form-group">
           <label for="nickname">닉네임:</label>
-          <input type="text" id="nickname" name="nickname" />
+          <input type="text" id="nickname" name="nickname" v-bind="updateUserInfo.userNickname" />
         </div>
         <div class="form-group">
           <label for="password">새 비밀번호:</label>
-          <input type="password" id="password" name="password" />
+          <input type="password" id="password" name="password" v-bind="updateUserInfo.userPw" />
         </div>
         <div class="form-group">
-          <button type="submit" class="submit-btn">저장</button>
+          <a href="#" class="submit-btn" @click.prevent="update">저장</a>
         </div>
+        <button class="close-btn" @click="closeModalProfile">닫기</button>
       </form>
-      <!-- <button class="close-btn" @click="showModal = false">닫기</button> -->
     </div>
   </div>
 </template>
@@ -80,6 +114,10 @@ const closeModalProfile = (event) => {
   width: 100px;
   height: 100px;
   cursor: pointer;
+}
+
+.profile-container img {
+  border-radius: 50%;
 }
 
 .user-simple-info {
@@ -123,6 +161,7 @@ const closeModalProfile = (event) => {
   padding: 25px;
   border-radius: 8px;
   width: 30%;
+  height: 60%;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
@@ -139,7 +178,9 @@ const closeModalProfile = (event) => {
 
 .user-profile-picture img {
   width: 40%;
-  height: 30%;
+  height: 150px;
+  cursor: pointer;
+  border-radius: 50%;
 }
 
 .form-group {

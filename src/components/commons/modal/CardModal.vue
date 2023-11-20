@@ -22,8 +22,8 @@ const closeModal = () => {
     <div class="card-body">
       <div class="card-actions"></div>
       <p class="description">
-        <span class="username">username</span> Lorem ipsum dolor sit amet,
-        consectetur adipiscing elit.
+        <span class="username">username</span> Lorem ipsum dolor sit amet, consectetur adipiscing
+        elit.
       </p>
     </div>
   </div>
