@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, onBeforeUnmount } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import LocomotiveScroll from "locomotive-scroll";
@@ -8,51 +8,91 @@ import LoginForm from "../components/LoginPageCommons/forms/LoginForm.vue";
 import BannerForm from "../components/LoginPageCommons/BannerForm.vue";
 
 gsap.registerPlugin(ScrollTrigger);
+
 const pageContainer = ref(null);
+let scroller = null;
+
+const updateScrollTrigger = () => {
+  if (scroller) {
+    scroller.update();
+  }
+};
 
 onMounted(() => {
-  const scroller = new LocomotiveScroll({
-    el: pageContainer.value,
-    smooth: true,
-  });
+  if (!pageContainer.value) {
+    console.error("pageContainer is not defined");
+    return;
+  }
 
-  scroller.on("scroll", ScrollTrigger.update);
+  try {
+    scroller = new LocomotiveScroll({
+      el: pageContainer.value,
+      smooth: true,
+    });
 
-  ScrollTrigger.scrollerProxy(pageContainer.value, {
-    scrollTop(value) {
-      return arguments.length
-        ? scroller.scrollTo(value, 0, 0)
-        : scroller.scroll.instance.scroll.y;
-    },
-    getBoundingClientRect() {
-      return {
-        left: 0,
-        top: 0,
-        width: window.innerWidth,
-        height: window.innerHeight,
-      };
-    },
-    pinType: pageContainer.value.style.transform ? "transform" : "fixed",
-  });
+    scroller.on("scroll", ScrollTrigger.update);
 
-  let pinWrap = document.querySelector(".pin-wrap");
-  let pinWrapWidth = pinWrap.offsetWidth;
-  let horizontalScrollLength = pinWrapWidth - window.innerWidth;
+    ScrollTrigger.scrollerProxy(pageContainer.value, {
+      scrollTop(value) {
+        return arguments.length
+          ? scroller.scrollTo(value, 0, 0)
+          : scroller.scroll.instance.scroll.y;
+      },
+      getBoundingClientRect() {
+        return {
+          left: 0,
+          top: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+      },
+      pinType: pageContainer.value.style.transform ? "transform" : "fixed",
+    });
 
-  gsap.to(".pin-wrap", {
-    scrollTrigger: {
-      scroller: pageContainer.value,
-      scrub: true,
-      trigger: "#sectionPin",
-      pin: true,
-      start: "top top",
-      end: pinWrapWidth,
-    },
-    x: -horizontalScrollLength,
-    ease: "none",
-  });
-  ScrollTrigger.addEventListener("refresh", () => scroller.update());
-  ScrollTrigger.refresh();
+    let pinWrap = document.querySelector(".pin-wrap");
+    let pinWrapWidth = pinWrap.offsetWidth;
+    let horizontalScrollLength = pinWrapWidth - window.innerWidth;
+
+    gsap.to(".pin-wrap", {
+      scrollTrigger: {
+        scroller: pageContainer.value,
+        scrub: true,
+        trigger: "#sectionPin",
+        pin: true,
+        start: "top top",
+        end: pinWrapWidth,
+      },
+      x: -horizontalScrollLength,
+      ease: "none",
+    });
+    ScrollTrigger.addEventListener("refresh", updateScrollTrigger);
+  } catch (error) {
+    console.error("Error initializing LocomotiveScroll:", error);
+  }
+});
+
+onBeforeUnmount(() => {
+  // 모든 ScrollTrigger 인스턴스 정리
+  ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+  ScrollTrigger.clearMatchMedia();
+
+  // ScrollTrigger 프록시 정리
+  if (pageContainer.value) {
+    ScrollTrigger.scrollerProxy(pageContainer.value, {
+      scrollTop: () => 0,
+      getBoundingClientRect: () => ({ left: 0, top: 0, width: 0, height: 0 }),
+      pinType: pageContainer.value.style.transform ? "transform" : "fixed",
+    });
+  }
+
+  // ScrollTrigger의 이벤트 리스너 제거
+  ScrollTrigger.removeEventListener("refresh", updateScrollTrigger);
+
+  // LocomotiveScroll 인스턴스 정리
+  if (scroller) {
+    scroller.destroy();
+    scroller = null;
+  }
 });
 </script>
 
@@ -61,9 +101,7 @@ onMounted(() => {
     <section data-bgcolor="#bcb8ad" data-textcolor="#032f35">
       <div>
         <img src="../assets/img/hangil_logo.png" style="width: 100%; height: auto" />
-        <p data-scroll data-scroll-speed="2" data-scroll-delay="0.2">
-          with Hangil & SSAFY
-        </p>
+        <p data-scroll data-scroll-speed="2" data-scroll-delay="0.2">with Hangil & SSAFY</p>
       </div>
     </section>
 
@@ -76,8 +114,8 @@ onMounted(() => {
     <section id="sectionPin">
       <div class="pin-wrap">
         <h2>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+          ut labore et dolore magna aliqua.
         </h2>
         <img src="../assets/img/slide1.jpg" alt="" />
         <img src="../assets/img/slide2.jpg" alt="" />
@@ -93,7 +131,7 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped >
+<style scoped>
 @import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
 @import url("https://use.typekit.net/skn8ash.css");
 @import url("https://cdn.jsdelivr.net/npm/locomotive-scroll@3/dist/locomotive-scroll.css");
@@ -188,7 +226,7 @@ h2 {
   padding: 50px 10vw;
 }
 
-.pin-wrap>* {
+.pin-wrap > * {
   min-width: 60vw;
   padding: 0 5vw;
 }

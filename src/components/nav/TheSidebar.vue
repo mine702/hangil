@@ -3,6 +3,7 @@ import { ref, defineEmits, onMounted } from "vue";
 import { useMemberStore } from "@/stores/member";
 import UserInfo from "../mypage/UserInfo.vue";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
 
 const isExpanded = ref(false);
 const emit = defineEmits(["update:expanded"]);
@@ -71,12 +72,12 @@ onMounted(() => {
 });
 
 const memberStore = useMemberStore();
-const { userLogout, userInfo } = memberStore;
+const { userLogout } = memberStore;
+const { userInfo } = storeToRefs(memberStore);
 const router = useRouter();
 
 const logout = async () => {
-  console.log("로그아웃 성공");
-  console.log(userInfo);
+  console.dir(userInfo.value.userId);
   await userLogout();
   router.push("/");
 };

@@ -17,7 +17,6 @@ const loginUser = ref({
 const login = async () => {
   await userLogin(loginUser.value);
   let token = sessionStorage.getItem("accessToken");
-  console.log(loginUser);
   if (isLogin) {
     getUserInfo(token);
     router.push("/home");
