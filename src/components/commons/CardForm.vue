@@ -79,7 +79,7 @@ let posts = ref([
   align-items: center;
   height: 45vh;
   /* position: relative; */
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .my-swiper {
@@ -89,12 +89,12 @@ let posts = ref([
 }
 
 .post-card {
-  flex: 0 0 calc(33.3333%); /* 슬라이드 당 이미지의 너비를 계산 */
-  margin: 0 15px; /* 이미지 사이 간격 */
-  width: 350px;
-  height: 330px;
+  flex: 0 0 calc(33.3333% - 20px); /* 슬라이드 당 이미지의 너비를 계산 */
+  margin: 0 5px; /* 이미지 사이 간격 */
+  width: 90%;
+  height: 100%;
   text-align: center;
-  background-color: rgb(246, 215, 220);
+  background-color: rgb(215, 230, 246);
 }
 
 .post-title {
@@ -121,7 +121,7 @@ let posts = ref([
 }
 .swiper-button-next {
   position: absolute;
-  right: 4%;
+  right: -1%;
   top: 50%;
   border: none;
   /* background-color: white; */

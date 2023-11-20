@@ -1,4 +1,29 @@
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+import { useMemberStore } from "@/stores/member";
+
+const router = useRouter();
+
+const memberStore = useMemberStore();
+const { isLogin } = storeToRefs(memberStore);
+const { userLogin, getUserInfo } = memberStore;
+const loginUser = ref({
+  userId: "",
+  userPw: "",
+});
+
+const login = async () => {
+  await userLogin(loginUser.value);
+  let token = sessionStorage.getItem("accessToken");
+  console.log(loginUser);
+  if (isLogin) {
+    getUserInfo(token);
+    router.push("/home");
+  }
+};
+</script>
 
 <template>
   <div class="col-12 text-center align-self-center py-5">
@@ -13,16 +38,30 @@
               <div class="section text-center">
                 <h4 class="mb-4 pb-3" style="color: white">Log In</h4>
                 <div class="form-group">
-                  <input type="email" name="loginEmail" class="form-style" placeholder="Your Email" id="loginEmail"
-                    autocomplete="off" />
+                  <input
+                    type="text"
+                    name="loginId"
+                    class="form-style"
+                    placeholder="Your ID"
+                    id="loginId"
+                    autocomplete="off"
+                    v-model="loginUser.userId"
+                  />
                   <i class="input-icon uil uil-at"></i>
                 </div>
                 <div class="form-group mt-2">
-                  <input type="password" name="loginPass" class="form-style" placeholder="Your Password" id="loginPass"
-                    autocomplete="off" />
+                  <input
+                    type="password"
+                    name="loginPass"
+                    class="form-style"
+                    placeholder="Your Password"
+                    id="loginPass"
+                    autocomplete="off"
+                    v-model="loginUser.userPw"
+                  />
                   <i class="input-icon uil uil-lock-alt"></i>
                 </div>
-                <a href="#" class="btn mt-4">Login</a>
+                <a href="#" class="btn mt-4" @click.prevent="login">Login</a>
                 <p class="mb-0 mt-4 text-center">
                   <a href="#0" class="link">Forgot your password?</a>
                 </p>
@@ -34,18 +73,36 @@
               <div class="section text-center">
                 <h4 class="mb-4 pb-3" style="color: white">Sign Up</h4>
                 <div class="form-group">
-                  <input type="text" name="SignName" class="form-style" placeholder="Your Full Name" id="SignName"
-                    autocomplete="off" />
+                  <input
+                    type="text"
+                    name="SignName"
+                    class="form-style"
+                    placeholder="Your Full Name"
+                    id="SignName"
+                    autocomplete="off"
+                  />
                   <i class="input-icon uil uil-user"></i>
                 </div>
                 <div class="form-group mt-2">
-                  <input type="email" name="SignEmail" class="form-style" placeholder="Your Email" id="SignEmail"
-                    autocomplete="off" />
+                  <input
+                    type="text"
+                    name="SignId"
+                    class="form-style"
+                    placeholder="Your Id"
+                    id="SignId"
+                    autocomplete="off"
+                  />
                   <i class="input-icon uil uil-at"></i>
                 </div>
                 <div class="form-group mt-2">
-                  <input type="password" name="SignPass" class="form-style" placeholder="Your Password" id="SignPass"
-                    autocomplete="off" />
+                  <input
+                    type="password"
+                    name="SignPass"
+                    class="form-style"
+                    placeholder="Your Password"
+                    id="SignPass"
+                    autocomplete="off"
+                  />
                   <i class="input-icon uil uil-lock-alt"></i>
                 </div>
                 <a href="#" class="btn mt-4">SIGN UP</a>
@@ -110,8 +167,8 @@ h6 span {
   left: -9999px;
 }
 
-.checkbox:checked+label,
-.checkbox:not(:checked)+label {
+.checkbox:checked + label,
+.checkbox:not(:checked) + label {
   position: relative;
   display: block;
   text-align: center;
@@ -124,8 +181,8 @@ h6 span {
   background-color: #ffeba7;
 }
 
-.checkbox:checked+label:before,
-.checkbox:not(:checked)+label:before {
+.checkbox:checked + label:before,
+.checkbox:not(:checked) + label:before {
   position: absolute;
   display: block;
   width: 36px;
@@ -144,7 +201,7 @@ h6 span {
   transition: all 0.5s ease;
 }
 
-.checkbox:checked+label:before {
+.checkbox:checked + label:before {
   transform: translateX(44px) rotate(-270deg);
 }
 
@@ -195,7 +252,7 @@ h6 span {
   transform: rotateY(180deg);
 }
 
-.checkbox:checked~.card-3d-wrap .card-3d-wrapper {
+.checkbox:checked ~ .card-3d-wrap .card-3d-wrapper {
   transform: rotateY(180deg);
 }
 

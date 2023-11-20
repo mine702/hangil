@@ -1,5 +1,8 @@
 <script setup>
 import { ref, defineEmits, onMounted } from "vue";
+import { useMemberStore } from "@/stores/member";
+import UserInfo from "../mypage/UserInfo.vue";
+import { useRouter } from "vue-router";
 
 const isExpanded = ref(false);
 const emit = defineEmits(["update:expanded"]);
@@ -66,6 +69,17 @@ onMounted(() => {
   document.addEventListener("mouseup", dragEnd);
   document.addEventListener("mousemove", drag);
 });
+
+const memberStore = useMemberStore();
+const { userLogout, userInfo } = memberStore;
+const router = useRouter();
+
+const logout = async () => {
+  console.log("로그아웃 성공");
+  console.log(userInfo);
+  await userLogout();
+  router.push("/");
+};
 </script>
 
 <template>
@@ -99,9 +113,9 @@ onMounted(() => {
       </router-link>
     </li>
     <li>
-      <router-link :to="'/searchpage'">
+      <a href="#" @click.prevent="logout">
         <span class="fa fa-sign-out" aria-hidden="true"></span>LogOut
-      </router-link>
+      </a>
     </li>
   </ul>
   <div class="fixed-logo"></div>
