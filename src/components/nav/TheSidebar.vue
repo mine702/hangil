@@ -76,8 +76,7 @@ const { userInfo } = storeToRefs(memberStore);
 const router = useRouter();
 
 const logout = async () => {
-  console.dir(userInfo.value.userId);
-  await userLogout();
+  await userLogout(userInfo.value.userId);
   router.push("/");
 };
 </script>

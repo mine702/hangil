@@ -45,8 +45,7 @@ const handleToggleModal = () => {
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: flex-start;
-  gap: 30px; /* 필요에 따라 게시물 사이의 간격 조정 */
-  height: 50%;
+  height: 60%;
 }
 
 /* 내 게시물 슬라이드 */

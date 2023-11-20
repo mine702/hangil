@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from "vue";
 import { useMemberStore } from "@/stores/member";
+import { storeToRefs } from "pinia";
+
 // 모달 이벤트
 const showModalProfile = ref(false);
 const closeModalProfile = (event) => {
@@ -28,19 +30,22 @@ const handleFileChange = (event) => {
 };
 
 const memberStore = useMemberStore();
-const { userUpdate } = memberStore;
+const { userUpdate, getUserInfo } = memberStore;
+const { userInfo } = storeToRefs(memberStore);
 
 // 프로필 업데이트
 const updateUserInfo = ref({
-  userPw: null,
-  userNickname: null,
+  userId: userInfo.value.userId,
+  userPw: "",
+  userNickname: "",
 });
 
 const update = async () => {
   let token = sessionStorage.getItem("accessToken");
-  if (token !== null) {
-    await userUpdate(updateUserInfo.value);
-  }
+
+  await userUpdate(updateUserInfo.value);
+  getUserInfo(token);
+  closeModalProfile = false;
 };
 </script>
 
@@ -51,6 +56,10 @@ const update = async () => {
       <div class="profile-text" style="font-size: 25px">Account</div>
       <div class="user-simple-info"></div>
     </div>
+    <br /><br />
+    {{ userInfo.userId }} 님 안녕하세요
+    <br />
+    {{ userInfo.userNickname }} 님 하이요
   </div>
   <!-- 모달 창 -->
   <div v-if="showModalProfile" class="modal-profile" @click="closeModalProfile">
@@ -70,11 +79,21 @@ const update = async () => {
         </div>
         <div class="form-group">
           <label for="nickname">닉네임:</label>
-          <input type="text" id="nickname" name="nickname" v-bind="updateUserInfo.userNickname" />
+          <input
+            type="text"
+            id="nickname"
+            name="nickname"
+            v-model="updateUserInfo.userNickname"
+          />
         </div>
         <div class="form-group">
           <label for="password">새 비밀번호:</label>
-          <input type="password" id="password" name="password" v-bind="updateUserInfo.userPw" />
+          <input
+            type="password"
+            id="password"
+            name="password"
+            v-model="updateUserInfo.userPw"
+          />
         </div>
         <div class="form-group">
           <a href="#" class="submit-btn" @click.prevent="update">저장</a>
@@ -161,7 +180,7 @@ const update = async () => {
   padding: 25px;
   border-radius: 8px;
   width: 30%;
-  height: 60%;
+  height: 70%;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 

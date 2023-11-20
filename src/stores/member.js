@@ -2,7 +2,14 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { jwtDecode } from "jwt-decode";
-import { userConfirm, findById, tokenRegeneration, logout, userJoin, userModify } from "@/api/user";
+import {
+  userConfirm,
+  findById,
+  tokenRegeneration,
+  logout,
+  userJoin,
+  userModify,
+} from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
 
 export const useMemberStore = defineStore(
@@ -45,8 +52,6 @@ export const useMemberStore = defineStore(
         registerUser,
         (response) => {
           console.log("회원가입 메서드 호출");
-          console.log(response);
-          console.log(httpStatusCode.ACCEPT);
           // 회원가입 성공
           if (response.status === httpStatusCode.ACCEPT) {
             console.log("회원가입 성공!!");
@@ -62,15 +67,13 @@ export const useMemberStore = defineStore(
       );
     };
 
-    const userUpdate = async (updateUserInfo) => {
+    const userUpdate = async (updateUser) => {
       await userModify(
-        updateUserInfo,
+        updateUser,
         (response) => {
           console.log("유저 정보 업데이트 메서드 호출");
-          console.log(response);
-          console.log(httpStatusCode.ACCEPT);
           // 정보수정 성공
-          if (response.status === httpStatusCode.ACCEPT) {
+          if (response.status === httpStatusCode.OK) {
             console.log("정보수정 성공!!");
           }
           // 정보수정 실패
