@@ -2,12 +2,15 @@
 import { ref } from "vue";
 import { usePinataStore } from "@/stores/pinata";
 import { useRouter } from "vue-router";
+import { getSearchList } from "@/api/map";
 
 const boardTitle = ref("");
 const boardPlace = ref("");
 const boardContent = ref("");
 const boardFiles = ref([]);
 const imageUrls = ref([]);
+const placeList = ref([]);
+const selectedPlace = ref(null); // 하나의 선택된 장소를 저장할 ref
 
 const currentSlide = ref(0);
 const fading = ref(false);
@@ -121,6 +124,31 @@ const submitImage = async () => {
     isLoading.value = false; // 로딩 상태 해제
   }
 };
+
+// 카카오맵 api
+const searchPlaces = async () => {
+  if (!boardPlace.value.trim()) return;
+
+  try {
+    // API 호출 시 검색어를 파라미터로 넘겨줍니다.
+    await getSearchList(
+      boardPlace.value,
+      (response) => {
+        placeList.value = response.data.documents;
+      },
+      (error) => {
+        console.error("장소 검색 오류:", error);
+      }
+    );
+  } catch (error) {
+    console.error("장소 검색 오류:", error);
+  }
+};
+
+const selectPlace = (place) => {
+  selectedPlace.value = place; // 선택된 장소 업데이트
+  console.log(selectedPlace.value);
+};
 </script>
 
 <template>
@@ -128,7 +156,29 @@ const submitImage = async () => {
     <div class="page-container">
       <div class="card">
         <input type="text" placeholder="제목" v-model="boardTitle" />
-        <input type="text" placeholder="장소" v-model="boardPlace" />
+
+        <!-- 카카오맵 api -->
+        <input
+          type="text"
+          placeholder="장소 검색"
+          v-model="boardPlace"
+          @input="searchPlaces"
+        />
+        <div class="list-container">
+          <ul v-if="placeList.length" class="place-list">
+            <li v-for="(place, index) in placeList" :key="index">
+              <a href="#" @click.prevent="selectPlace(place)">
+                {{ place.place_name }}
+                <span
+                  v-if="selectedPlace && place.id === selectedPlace.id"
+                  class="checkmark"
+                  >✔</span
+                >
+              </a>
+            </li>
+          </ul>
+        </div>
+        <!-- 카카오맵 api -->
         <textarea placeholder="내용" v-model="boardContent"></textarea>
         <input
           type="file"
@@ -420,5 +470,53 @@ button:hover {
   align-items: center;
   margin-top: 5%;
   /* 나머지 스타일은 동일 */
+}
+
+.list-container {
+  max-height: 200px; /* 최대 높이 설정 */
+  overflow-y: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
+}
+.place-list {
+  list-style: none; /* 기본 리스트 스타일 제거 */
+  padding: 0; /* 기본 패딩 제거 */
+}
+
+.place-list a {
+  display: block;
+  padding: 5px 10px;
+  text-decoration: none;
+  color: black;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.place-list a:hover {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.checkmark {
+  color: green;
+  margin-left: 5px;
+}
+
+/* 체크 표시의 디자인 */
+.checkmark {
+  color: #28a745; /* 부트스트랩의 success 색상 */
+  font-weight: bold;
+}
+
+/* 호버 애니메이션을 위한 스타일 */
+.place-list a:hover .checkmark {
+  animation: bounce 0.5s;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
 }
 </style>

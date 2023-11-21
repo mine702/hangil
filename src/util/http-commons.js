@@ -1,7 +1,11 @@
 import axios from "axios";
 // import { httpStatusCode } from "./http-status";
 
-const { VITE_VUE_API_URL, VITE_ELECTRIC_CHARGING_STATION_URL } = import.meta.env;
+const {
+  VITE_VUE_API_URL,
+  VITE_ELECTRIC_CHARGING_STATION_URL,
+  VITE_KAKAO_DEVELOPERS_KEY,
+} = import.meta.env;
 
 // station vue api axios instance
 function stationAxios() {
@@ -9,6 +13,16 @@ function stationAxios() {
     baseURL: VITE_ELECTRIC_CHARGING_STATION_URL,
     headers: {
       "Content-Type": "application/json;charset=utf-8",
+    },
+  });
+  return instance;
+}
+
+function kakaoAxios() {
+  const instance = axios.create({
+    baseURL: "https://dapi.kakao.com", // 공통 요청 경로를 지정해준다.
+    headers: {
+      Authorization: `KakaoAK ${VITE_KAKAO_DEVELOPERS_KEY}`,
     },
   });
   return instance;
@@ -87,4 +101,4 @@ function localAxios() {
   return instance;
 }
 
-export { localAxios, stationAxios };
+export { localAxios, stationAxios, kakaoAxios };
