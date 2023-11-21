@@ -13,11 +13,23 @@ function handleSidebarToggle(expanded) {
 <template>
   <TheSidebar @update:expanded="handleSidebarToggle"></TheSidebar>
   <div :class="{ 'expanded-sidebar': isSidebarExpanded }">
-    <RouterView></RouterView>
+    <RouterView v-slot="{ Component }">
+      <transition name="fade" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </RouterView>
   </div>
 </template>
 
 <style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
 .expanded-sidebar {
   margin-left: 300px;
   /* 사이드바 확장 너비에 맞춰 조정 */
