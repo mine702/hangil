@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 
 const isModalVisible = ref(false); // 모달 표시 상태
 

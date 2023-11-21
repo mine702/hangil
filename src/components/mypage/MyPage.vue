@@ -1,19 +1,12 @@
 <script setup>
-import { ref } from "vue";
 import UserInfo from "./UserInfo.vue";
 import CardForm from "../commons/CardForm.vue";
-
-// 유저 정보 수정 모달
-const showModalProfile = ref(false);
-const handleToggleModal = () => {
-  showModalProfile.value = !showModalProfile.value;
-};
 </script>
 
 <template>
   <div class="my-page">
     <div class="user-info">
-      <UserInfo @toggle-modal="handleToggleModal" />
+      <UserInfo />
     </div>
     <div class="card-form">
       내 게시물

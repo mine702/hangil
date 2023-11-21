@@ -41,13 +41,14 @@ $(function () {
       <CommonCard @click="handleCardClick" />
     </div>
     <MessageForm class="message-form" />
+
+    <!-- 모달, isModalVisible이 true일 때만 표시 -->
+    <transition name="modal">
+      <div class="modal-overlay" v-if="isModalVisible">
+        <CardModal @closeModal="isModalVisible = false" />
+      </div>
+    </transition>
   </div>
-  <!-- 모달, isModalVisible이 true일 때만 표시 -->
-  <transition name="modal">
-    <div class="modal-overlay" v-if="isModalVisible">
-      <CardModal @closeModal="isModalVisible = false" />
-    </div>
-  </transition>
 </template>
 
 <style scoped>
