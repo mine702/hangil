@@ -1,12 +1,19 @@
 <script setup>
 import { ref } from "vue";
+import { storeToRefs } from "pinia";
 import { usePinataStore } from "@/stores/pinata";
+import { useMemberStore } from "@/stores/member";
 import { useRouter } from "vue-router";
 import { getSearchList } from "@/api/map";
 
-const boardTitle = ref("");
+const pinataStore = usePinataStore();
+const memberStore = useMemberStore();
+
+const { imgCid } = storeToRefs(pinataStore);
+const { userInfo } = storeToRefs(memberStore);
+const { submitImages } = pinataStore;
+
 const boardPlace = ref("");
-const boardContent = ref("");
 const boardFiles = ref([]);
 const imageUrls = ref([]);
 const placeList = ref([]);
@@ -15,21 +22,27 @@ const selectedPlace = ref(null); // 하나의 선택된 장소를 저장할 ref
 const currentSlide = ref(0);
 const fading = ref(false);
 
-const pinataStore = usePinataStore();
-
-const { submitImages } = pinataStore;
-const boardTags = ref("");
-const tagsArray = ref([]);
+const boardTag = ref("");
 
 const isLoading = ref(false); // 로딩 상태 표시
 const isCompleted = ref(false); // 완료 상태
 const router = useRouter(); // 페이지 리디렉션을 위한 라우터 인스턴스
 
+const boardDTO = ref({
+  userId: userInfo.value.userId,
+  boardTitle: "",
+  boardContent: "",
+  boardFileCID: [],
+  boardLatitude: "",
+  boardLongitude: "",
+  boardTags: [],
+});
+
 const addTag = () => {
   // 입력된 태그가 있다면 배열에 추가
-  if (boardTags.value.trim()) {
-    tagsArray.value.push(boardTags.value.trim());
-    boardTags.value = ""; // 입력 필드 초기화
+  if (boardTag.value.trim()) {
+    boardDTO.value.boardTags.push(boardTag.value.trim());
+    boardTag.value = ""; // 입력 필드 초기화
   }
 };
 
@@ -105,6 +118,7 @@ const previousSlide = () => {
     currentSlide.value = imageUrls.value.length - 1;
   }
 };
+
 const submitImage = async () => {
   isLoading.value = true; // 로딩 시작
   const formData = new FormData();
@@ -113,10 +127,12 @@ const submitImage = async () => {
   }
   try {
     await submitImages(formData);
+    boardDTO.value.boardFileCID = imgCid.value;
+    console.log(boardDTO.value);
     isCompleted.value = true; // 완료 상태로 설정
-    setTimeout(() => {
-      router.push("/home"); // 사용자를 다른 페이지로 리디렉션
-    }, 1000); // 3초 후 페이지 이동
+    // setTimeout(() => {
+    //   router.push("/home"); // 사용자를 다른 페이지로 리디렉션
+    // }, 1000); // 3초 후 페이지 이동
   } catch (error) {
     console.error(error);
     // 에러 처리 로직
@@ -147,7 +163,8 @@ const searchPlaces = async () => {
 
 const selectPlace = (place) => {
   selectedPlace.value = place; // 선택된 장소 업데이트
-  console.log(selectedPlace.value);
+  boardDTO.value.boardLatitude = place.x;
+  boardDTO.value.boardLongitude = place.y;
 };
 </script>
 
@@ -155,7 +172,7 @@ const selectPlace = (place) => {
   <body>
     <div class="page-container">
       <div class="card">
-        <input type="text" placeholder="제목" v-model="boardTitle" />
+        <input type="text" placeholder="제목" v-model="boardDTO.boardTitle" />
 
         <!-- 카카오맵 api -->
         <input
@@ -179,7 +196,7 @@ const selectPlace = (place) => {
           </ul>
         </div>
         <!-- 카카오맵 api -->
-        <textarea placeholder="내용" v-model="boardContent"></textarea>
+        <textarea placeholder="내용" v-model="boardDTO.boardContent"></textarea>
         <input
           type="file"
           multiple
@@ -202,13 +219,17 @@ const selectPlace = (place) => {
         <input
           type="text"
           placeholder="태그"
-          v-model="boardTags"
+          v-model="boardTag"
           @keydown.space="handleSpace"
         />
 
         <!-- 입력된 태그들을 리스트로 표시 -->
         <transition-group name="tag" class="tags-container" tag="div">
-          <span class="tag" v-for="(tag, index) in tagsArray" :key="tag">
+          <span
+            class="tag"
+            v-for="(tag, index) in boardDTO.boardTags"
+            :key="tag"
+          >
             {{ tag }}
             <button class="delete-tag" @click="removeTag(index)">x</button>
           </span>
