@@ -5,7 +5,6 @@ import { httpStatusCode } from "@/util/http-status";
 
 export const usePinataStore = defineStore("pinatastore", () => {
   const submitImages = async (images) => {
-    console.log(images);
     await pinataUploadImages(
       images,
       (response) => {

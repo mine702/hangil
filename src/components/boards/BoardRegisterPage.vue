@@ -48,6 +48,7 @@ const resizeImage = (file) => {
 
 const handleFileChange = async (event) => {
   const files = Array.from(event.target.files);
+  console.dir(files);
   try {
     const resizedImages = await Promise.all(
       files.map((file) => resizeImage(file))
@@ -79,9 +80,8 @@ const previousSlide = () => {
 const submitImage = async () => {
   const formData = new FormData();
   for (let i = 0; i < boardFiles.value.length; i++) {
-    formData.append(`image${i}`, boardFiles.value[i]);
+    formData.append("imageFile", boardFiles.value[i]);
   }
-  console.log(formData);
   await submitImages(formData);
 };
 </script>
@@ -144,14 +144,19 @@ textarea {
 }
 
 .slide-image {
-  width: 100%; /* 너비 고정 */
-  height: 100%; /* 높이 고정 */
-  object-fit: cover; /* 이미지 비율 유지하면서 컨테이너에 맞춤 */
+  width: 100%;
+  /* 너비 고정 */
+  height: 100%;
+  /* 높이 고정 */
+  object-fit: cover;
+  /* 이미지 비율 유지하면서 컨테이너에 맞춤 */
   transition: opacity 0.5s ease;
 }
+
 .fading {
   opacity: 0;
 }
+
 .slide-btn {
   position: absolute;
   top: 50%;
