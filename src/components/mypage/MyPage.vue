@@ -1,6 +1,6 @@
 <script setup>
 import UserInfo from "./UserInfo.vue";
-import CardForm from "../commons/CardForm.vue";
+import MypageSlide from "../commons/MypageSlide.vue";
 </script>
 
 <template>
@@ -10,11 +10,11 @@ import CardForm from "../commons/CardForm.vue";
     </div>
     <div class="card-form">
       내 게시물
-      <CardForm />
+      <MypageSlide />
     </div>
     <div class="user-picks">
       저장하고 싶은 게시물
-      <CardForm />
+      <MypageSlide />
     </div>
   </div>
 </template>
@@ -34,11 +34,11 @@ import CardForm from "../commons/CardForm.vue";
 
 .card-form {
   width: 100%;
+  height: 60%;
   display: block;
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: flex-start;
-  height: 60%;
 }
 
 /* 내 게시물 슬라이드 */

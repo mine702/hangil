@@ -2,14 +2,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { jwtDecode } from "jwt-decode";
-import {
-  userConfirm,
-  findById,
-  tokenRegeneration,
-  logout,
-  userJoin,
-  userModify,
-} from "@/api/user";
+import { userConfirm, findById, tokenRegeneration, logout, userJoin, userModify } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
 
 export const useMemberStore = defineStore(
@@ -74,6 +67,7 @@ export const useMemberStore = defineStore(
           console.log("유저 정보 업데이트 메서드 호출");
           // 정보수정 성공
           if (response.status === httpStatusCode.OK) {
+            userInfo.value = response.data.userInfo;
             console.log("정보수정 성공!!");
           }
           // 정보수정 실패

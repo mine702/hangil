@@ -3,8 +3,8 @@ import { ref } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
 import "swiper/bundle";
-import CommonCard from "../commons/CommonCard.vue";
 import CardModal from "../commons/modal/CardModal.vue";
+import MypageCard from "./MypageCard.vue";
 
 const isModalVisible = ref(false); // 모달 표시 상태
 const handleCardClick = () => {
@@ -37,8 +37,6 @@ let posts = ref([
       "https://img.freepik.com/free-photo/aerial-beautiful-shot-of-a-seashore-with-hills-on-the-background-at-sunset_181624-24143.jpg?size=626&ext=jpg&ga=GA1.1.89001508.1698988307&semt=ais",
   },
 ]);
-
-
 </script>
 
 <template>
@@ -55,15 +53,12 @@ let posts = ref([
       class="my-swiper"
     >
       <div class="swiper-button-prev">&lt;</div>
-      <div class="swiper-button-next">&gt;</div>
       <SwiperSlide v-for="post in posts" :key="post.id">
-        <CommonCard class="post-card" @click="handleCardClick">
-          <!-- <div class="post-title">{{ post.title }}</div>
-          <div class="post-picture">
-            <img :src="post.image" alt="" @click="handleCardClick" />
-          </div> -->
-        </CommonCard>
+        <div class="post-card">
+          <MypageCard :post="post" @click="handleCardClick"></MypageCard>
+        </div>
       </SwiperSlide>
+      <div class="swiper-button-next">&gt;</div>
     </Swiper>
     <transition name="modal">
       <div class="modal-overlay" v-if="isModalVisible">
@@ -75,7 +70,7 @@ let posts = ref([
 
 <style scoped>
 .user-post {
-  width: 86vw;
+  width: 90vw;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -91,45 +86,34 @@ let posts = ref([
 }
 
 .post-card {
-  flex: 0 0 calc(33.3333% - 20px); /* 슬라이드 당 이미지의 너비를 계산 */
-  margin: 0 5px; /* 이미지 사이 간격 */
-  width: 70%;
-  height: 350px;
-  text-align: center;
-  background-color: rgb(215, 230, 246);
+  border-radius: 15px;
+  padding: 10px;
+  flex: 1;
+  scale: 0.9;
+  background-color: white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.3);
+  color: #626567;
+  margin-top: 20%;
 }
 
-.post-title {
-  height: 10%;
-  padding-top: 2%;
-  text-align: center;
-  color: #363c5a;
-}
-
-.post-picture img {
-  width: 300px;
-  height: 200px;
+.swiper-button-prev,
+.swiper-button-next {
+  position: absolute;
+  top: 55%;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  z-index: 100;
 }
 
 .swiper-button-prev {
-  position: absolute;
   left: -1%;
-  top: 50%;
-  border: none;
-  /* background-color: white; */
-  padding: 10px 20px;
-  cursor: pointer;
-  z-index: 100;
 }
 .swiper-button-next {
-  position: absolute;
   right: -1%;
-  top: 50%;
-  border: none;
-  /* background-color: white; */
-  padding: 10px 20px;
-  cursor: pointer;
-  z-index: 100;
 }
 
 .modal {

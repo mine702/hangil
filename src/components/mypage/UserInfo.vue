@@ -30,7 +30,7 @@ const handleFileChange = (event) => {
 };
 
 const memberStore = useMemberStore();
-const { userUpdate, getUserInfo } = memberStore;
+const { userUpdate } = memberStore;
 const { userInfo } = storeToRefs(memberStore);
 
 // 프로필 업데이트
@@ -38,14 +38,12 @@ const updateUserInfo = ref({
   userId: userInfo.value.userId,
   userPw: "",
   userNickname: "",
+  profilePicture: profileImage,
 });
 
 const update = async () => {
-  let token = sessionStorage.getItem("accessToken");
-
   await userUpdate(updateUserInfo.value);
-  getUserInfo(token);
-  closeModalProfile = false;
+  showModalProfile.value = false; // 모달 창 닫기
 };
 </script>
 
@@ -56,10 +54,10 @@ const update = async () => {
       <div class="profile-text" style="font-size: 25px">Account</div>
       <div class="user-simple-info"></div>
     </div>
-    <br /><br />
-    {{ userInfo.userId }} 님 안녕하세요
-    <br />
-    {{ userInfo.userNickname }} 님 하이요
+    <div v-if="userInfo.userId !== null">
+      <br /><br /><br />
+      {{ userInfo.userNickname }} ( {{ userInfo.userId }} )님 안녕하세요
+    </div>
   </div>
   <!-- 모달 창 -->
   <div v-if="showModalProfile" class="modal-profile" @click="closeModalProfile">
@@ -79,21 +77,11 @@ const update = async () => {
         </div>
         <div class="form-group">
           <label for="nickname">닉네임:</label>
-          <input
-            type="text"
-            id="nickname"
-            name="nickname"
-            v-model="updateUserInfo.userNickname"
-          />
+          <input type="text" id="nickname" name="nickname" v-model="updateUserInfo.userNickname" />
         </div>
         <div class="form-group">
           <label for="password">새 비밀번호:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            v-model="updateUserInfo.userPw"
-          />
+          <input type="password" id="password" name="password" v-model="updateUserInfo.userPw" />
         </div>
         <div class="form-group">
           <a href="#" class="submit-btn" @click.prevent="update">저장</a>

@@ -1,5 +1,78 @@
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
+import { listSido, listGugun } from "@/api/map";
+import KakaoMap from "@/components/commons/map/KakaoMap.vue";
+
+// 지도 관련 변수
+const { VITE_OPEN_API_SERVICE_KEY } = import.meta.env;
+const sidoList = ref([]);
+const gugunList = ref([{ text: "구군선택", value: "" }]);
+const chargingStations = ref([]);
+const selectStation = ref({});
+
+const param = ref({
+  serviceKey: VITE_OPEN_API_SERVICE_KEY,
+  pageNo: 1,
+  numOfRows: 20,
+  zscode: 0,
+});
+
+const getSidoList = () => {
+  listSido(
+    ({ data }) => {
+      let options = [];
+      options.push({ text: "시도선택", value: "" });
+      data.forEach((sido) => {
+        options.push({ text: sido.sidoName, value: sido.sidoCode });
+      });
+      sidoList.value = options;
+    },
+    (err) => {
+      console.log(err);
+    }
+  );
+};
+
+const onChangeSido = (val) => {
+  listGugun(
+    { sido: val },
+    ({ data }) => {
+      let options = [];
+      options.push({ text: "구군선택", value: "" });
+      data.forEach((gugun) => {
+        options.push({ text: gugun.gugunName, value: gugun.gugunCode });
+      });
+      gugunList.value = options;
+    },
+    (err) => {
+      console.log(err);
+    }
+  );
+};
+
+const onChangeGugun = (val) => {
+  param.value.zscode = val;
+  getChargingStations();
+};
+const getChargingStations = () => {
+  listStations(
+    param.value,
+    ({ data }) => {
+      chargingStations.value = data.items[0].item;
+    },
+    (err) => {
+      console.log(err);
+    }
+  );
+};
+
+const viewStation = (station) => {
+  selectStation.value = station;
+};
+
+onMounted(() => {
+  getSidoList();
+});
 
 // 계획 제목
 const text = ref("클릭하여 제목을 편집해주세요");
@@ -22,15 +95,14 @@ const lists = reactive([
       { content: "문자열 테스트 1" },
       { content: "문자열 테스트 2" },
       { content: "문자열 테스트 3" },
-    ],
-  },
-  {
-    id: 2,
-    numberList: [
       { content: "문자열 테스트 4" },
       { content: "문자열 테스트 5" },
       { content: "문자열 테스트 6" },
     ],
+  },
+  {
+    id: 2,
+    numberList: [],
   },
 ]);
 
@@ -51,10 +123,7 @@ const moveItem = (clickedItem, listId) => {
 
   // 찾은 아이템을 이동시킵니다.
   if (sourceListIdx !== undefined) {
-    const [movedItem] = lists[sourceListIdx].numberList.splice(
-      sourceItemIdx,
-      1
-    );
+    const [movedItem] = lists[sourceListIdx].numberList.splice(sourceItemIdx, 1);
     lists[targetListIdx].numberList.push(movedItem);
   }
   clickedItem.value = clickedItemObj; // 클릭된 아이템을 저장
@@ -70,12 +139,7 @@ const moveItem = (clickedItem, listId) => {
           <div v-if="text === ''">클릭하여 제목을 편집해주세요</div>
           {{ text }}
         </div>
-        <input
-          v-else
-          v-model="text"
-          @blur="stopEditing"
-          placeholder="제목 입력"
-        />
+        <input v-else v-model="text" @blur="stopEditing" placeholder="제목 입력" />
       </div>
       <!-- 저장 및 공유 버튼 -->
       <div class="buttons">
@@ -99,7 +163,9 @@ const moveItem = (clickedItem, listId) => {
           </div>
         </transition-group>
       </div>
-      <div class="map">지도</div>
+      <div class="map">
+        <KakaoMap :stations="chargingStations" :selectStation="selectStation" />
+      </div>
     </div>
   </div>
 </template>
@@ -257,16 +323,14 @@ const moveItem = (clickedItem, listId) => {
   transform: translateX(-100%);
   opacity: 0;
 }
-.item {
-}
 
 .map {
   font-size: 100px;
   text-align: center;
-  padding-top: 20%;
   margin-left: 6%;
   width: 50%;
   height: 90%;
-  background-color: rgb(133, 218, 160);
+  background-color: rgb(92, 103, 141);
+  border-radius: 30px;
 }
 </style>
