@@ -2,15 +2,23 @@
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
-const isToggled = ref(false);
+const isToggled = ref(localStorage.getItem("isToggled") === "true");
 
 watch(isToggled, (newValue) => {
+  localStorage.setItem("isToggled", newValue); // 토글 상태를 localStorage에 저장
   if (newValue) {
-    // 토글이 켜졌을 때 boardRegister로 라우팅
     router.push({ name: "boardRegister" });
   } else {
-    // 토글이 꺼졌을 때 boardPage로 라우팅
     router.push({ name: "boardPage" });
+  }
+});
+
+// 페이지 로드 시 라우터 상태에 따라 토글 상태를 설정할 수 있음
+router.afterEach((to) => {
+  if (to.name === "boardRegister") {
+    isToggled.value = true;
+  } else if (to.name === "boardPage") {
+    isToggled.value = false;
   }
 });
 </script>
