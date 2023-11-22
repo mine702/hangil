@@ -5,20 +5,7 @@ var map;
 const positions = ref([]);
 const markers = ref([]);
 
-const props = defineProps({ stations: Array, selectStation: Object });
-
-watch(
-  () => props.selectStation.value,
-  () => {
-    // 이동할 위도 경도 위치를 생성합니다
-    var moveLatLon = new kakao.maps.LatLng(props.selectStation.lat, props.selectStation.lng);
-
-    // 지도 중심을 부드럽게 이동시킵니다
-    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
-    map.panTo(moveLatLon);
-  },
-  { deep: true }
-);
+const props = defineProps({ lists: Object, selectLists: Object });
 
 onMounted(() => {
   if (window.kakao && window.kakao.maps) {
@@ -35,16 +22,35 @@ onMounted(() => {
 });
 
 watch(
-  () => props.stations.value,
+  () => props.lists,
   () => {
-    positions.value = [];
-    props.stations.forEach((station) => {
+    const markList = props.lists[1].numberList;
+    // 쓰지않는 컨텐츠 리스트 저장
+    const unMarkList = props.lists[0].numberList;
+    console.log(unMarkList);
+    markList.forEach((list) => {
       let obj = {};
-      obj.latlng = new kakao.maps.LatLng(station.lat, station.lng);
-      obj.title = station.statNm;
-
+      obj.latlng = new kakao.maps.LatLng(
+        list.boardLatitude,
+        list.boardLongitude
+      );
+      obj.title = list.content;
       positions.value.push(obj);
     });
+
+    // console.dir(listNotUse);
+    let lenght = markers.value.length;
+    deleteAllMarkers();
+    unMarkList.forEach((deleteContent) => {
+      // for (var i = 0; i < markers.value.length; i++) {
+      //   if (markers.value[i].getTitle() === deleteContent.content) {
+      //     // console.log("여기");
+      //     markers.value[i].setMap(null);
+      //     markers.value.splice(i, 1);
+      //   }
+      // }
+    });
+    // console.log(markers.value.length);
     loadMarkers();
   },
   { deep: true }
@@ -53,17 +59,21 @@ watch(
 const initMap = () => {
   const container = document.getElementById("map");
   const options = {
-    center: new kakao.maps.LatLng(33.450701, 126.570667),
-    level: 3,
+    center: new kakao.maps.LatLng(36.358548, 127.3026399),
+    level: 5,
   };
   map = new kakao.maps.Map(container, options);
 
-  // loadMarkers();
+  if (props.selectLists && props.selectLists.value) {
+    loadMarkers();
+  } else {
+    console.log("마크안찍힘");
+  }
 };
 
 const loadMarkers = () => {
   // 현재 표시되어있는 marker들이 있다면 map에 등록된 marker를 제거한다.
-  deleteMarkers();
+  deleteAllMarkers();
 
   // 마커 이미지를 생성합니다
   //   const imgSrc = require("@/assets/map/markerStar.png");
@@ -94,9 +104,24 @@ const loadMarkers = () => {
   map.setBounds(bounds);
 };
 
-const deleteMarkers = () => {
+// 모든 마커 삭제
+const deleteAllMarkers = () => {
   if (markers.value.length > 0) {
     markers.value.forEach((marker) => marker.setMap(null));
+  }
+};
+
+// selectedList에서 제거된 요소 마커만 삭제
+const deleteMarker = (item) => {
+  // console.log("아이템", item);
+  const markerIndex = markers.value.findIndex((marker) => {
+    console.log(item.content);
+    marker.getTitle() === item.content;
+  });
+  // console.log("인덱스", markerIndex);
+  // console.log("마커", markers);
+  if (markers.value[markerIndex] !== undefined) {
+    markers.value[markerIndex].setMap(null);
   }
 };
 </script>

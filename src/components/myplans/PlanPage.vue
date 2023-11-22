@@ -1,78 +1,6 @@
 <script setup>
 import { reactive, ref, onMounted } from "vue";
-import { listSido, listGugun } from "@/api/map";
 import KakaoMap from "@/components/commons/map/KakaoMap.vue";
-
-// 지도 관련 변수
-const { VITE_OPEN_API_SERVICE_KEY } = import.meta.env;
-const sidoList = ref([]);
-const gugunList = ref([{ text: "구군선택", value: "" }]);
-const chargingStations = ref([]);
-const selectStation = ref({});
-
-const param = ref({
-  serviceKey: VITE_OPEN_API_SERVICE_KEY,
-  pageNo: 1,
-  numOfRows: 20,
-  zscode: 0,
-});
-
-const getSidoList = () => {
-  listSido(
-    ({ data }) => {
-      let options = [];
-      options.push({ text: "시도선택", value: "" });
-      data.forEach((sido) => {
-        options.push({ text: sido.sidoName, value: sido.sidoCode });
-      });
-      sidoList.value = options;
-    },
-    (err) => {
-      console.log(err);
-    }
-  );
-};
-
-const onChangeSido = (val) => {
-  listGugun(
-    { sido: val },
-    ({ data }) => {
-      let options = [];
-      options.push({ text: "구군선택", value: "" });
-      data.forEach((gugun) => {
-        options.push({ text: gugun.gugunName, value: gugun.gugunCode });
-      });
-      gugunList.value = options;
-    },
-    (err) => {
-      console.log(err);
-    }
-  );
-};
-
-const onChangeGugun = (val) => {
-  param.value.zscode = val;
-  getChargingStations();
-};
-const getChargingStations = () => {
-  listStations(
-    param.value,
-    ({ data }) => {
-      chargingStations.value = data.items[0].item;
-    },
-    (err) => {
-      console.log(err);
-    }
-  );
-};
-
-const viewStation = (station) => {
-  selectStation.value = station;
-};
-
-onMounted(() => {
-  getSidoList();
-});
 
 // 계획 제목
 const text = ref("클릭하여 제목을 편집해주세요");
@@ -88,16 +16,25 @@ const stopEditing = () => {
 };
 
 // 계획 단위별 조정
-const lists = reactive([
+const lists = ref([
   {
     id: 1,
     numberList: [
-      { content: "문자열 테스트 1" },
-      { content: "문자열 테스트 2" },
-      { content: "문자열 테스트 3" },
-      { content: "문자열 테스트 4" },
-      { content: "문자열 테스트 5" },
-      { content: "문자열 테스트 6" },
+      {
+        content: "스시하린",
+        boardLatitude: 36.3582732,
+        boardLongitude: 127.3032399,
+      },
+      {
+        content: "내 집",
+        boardLatitude: 36.358548,
+        boardLongitude: 127.3026399,
+      },
+      {
+        content: "맥도날드",
+        boardLatitude: 36.3543351,
+        boardLongitude: 127.3403842,
+      },
     ],
   },
   {
@@ -106,12 +43,15 @@ const lists = reactive([
   },
 ]);
 
+// 클릭한 객체 저장할 배열
+const selectedLists = ref([]);
+
 // 클릭으로 아이템을 이동시키는 메소드
 const moveItem = (clickedItem, listId) => {
   let sourceListIdx, sourceItemIdx, targetListIdx;
 
   // 해당 아이템과 속한 리스트를 찾습니다.
-  lists.forEach((list, listIdx) => {
+  lists.value.forEach((list, listIdx) => {
     const itemIdx = list.numberList.findIndex((item) => item === clickedItem);
     if (itemIdx !== -1) {
       sourceListIdx = listIdx;
@@ -120,13 +60,28 @@ const moveItem = (clickedItem, listId) => {
       targetListIdx = listIdx === 0 ? 1 : 0;
     }
   });
-
   // 찾은 아이템을 이동시킵니다.
   if (sourceListIdx !== undefined) {
-    const [movedItem] = lists[sourceListIdx].numberList.splice(sourceItemIdx, 1);
-    lists[targetListIdx].numberList.push(movedItem);
+    const [movedItem] = lists.value[sourceListIdx].numberList.splice(
+      sourceItemIdx,
+      1
+    );
+    lists.value[targetListIdx].numberList.push(movedItem);
   }
-  clickedItem.value = clickedItemObj; // 클릭된 아이템을 저장
+
+  // 누른게 왼쪽에 있었을때(계획에 추가할때)
+  if (sourceListIdx === 0) {
+    selectedLists.value.push(clickedItem);
+  }
+  // 누른게 오른쪽에 있었을때
+  else {
+    const indexInSelected = selectedLists.value.indexOf(clickedItem);
+    if (indexInSelected !== -1) {
+      selectedLists.value.splice(indexInSelected, 1);
+    }
+  }
+
+  // console.log(selectedLists.value);
 };
 </script>
 
@@ -139,7 +94,12 @@ const moveItem = (clickedItem, listId) => {
           <div v-if="text === ''">클릭하여 제목을 편집해주세요</div>
           {{ text }}
         </div>
-        <input v-else v-model="text" @blur="stopEditing" placeholder="제목 입력" />
+        <input
+          v-else
+          v-model="text"
+          @blur="stopEditing"
+          placeholder="제목 입력"
+        />
       </div>
       <!-- 저장 및 공유 버튼 -->
       <div class="buttons">
@@ -164,7 +124,7 @@ const moveItem = (clickedItem, listId) => {
         </transition-group>
       </div>
       <div class="map">
-        <KakaoMap :stations="chargingStations" :selectStation="selectStation" />
+        <KakaoMap :lists="lists" :selectLists="selectedLists" />
       </div>
     </div>
   </div>
