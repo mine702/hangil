@@ -94,7 +94,12 @@ const moveItem = (clickedItem, listId) => {
           <div v-if="text === ''">클릭하여 제목을 편집해주세요</div>
           {{ text }}
         </div>
-        <input v-else v-model="text" @blur="stopEditing" placeholder="제목 입력" />
+        <input
+          v-else
+          v-model="text"
+          @blur="stopEditing"
+          placeholder="제목 입력"
+        />
       </div>
       <!-- 저장 및 공유 버튼 -->
       <div class="buttons">
