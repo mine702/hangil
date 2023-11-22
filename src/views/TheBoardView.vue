@@ -42,10 +42,12 @@ router.afterEach((to) => {
 .fade-leave-active {
   transition: opacity 0.5s;
 }
+
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
 }
+
 .toggle-switch {
   position: fixed;
   top: 90%;
@@ -86,11 +88,11 @@ router.afterEach((to) => {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-input:checked + .toggle-slider {
+input:checked+.toggle-slider {
   background-color: #7b68ee;
 }
 
-input:checked + .toggle-slider:before {
+input:checked+.toggle-slider:before {
   transform: translateX(26px);
 }
 </style>

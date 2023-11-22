@@ -1,6 +1,8 @@
 <script setup>
 import { ref, defineEmits, defineProps, computed } from "vue";
-
+import { storeToRefs } from "pinia";
+import { useBoardStore } from "@/stores/board";
+import { useMemberStore } from "@/stores/member";
 // props와 emits 정의
 const props = defineProps({
   data: Object,
@@ -11,6 +13,17 @@ const emits = defineEmits(["close"]);
 const closeModal = () => {
   emits("close");
 };
+
+const boardStore = useBoardStore();
+const memberStore = useMemberStore();
+
+const { boardSavePost } = boardStore;
+const { userInfo } = storeToRefs(memberStore);
+
+const boardStorage = ref({
+  userId: userInfo.value.userId,
+  boardNo: props.data.boardNo,
+})
 
 const isLiked = ref(false);
 const isShared = ref(false);
@@ -24,8 +37,9 @@ const toggleShare = () => {
   isShared.value = !isShared.value;
 };
 
-const toggleSave = () => {
+const toggleSave = async () => {
   isSaved.value = !isSaved.value;
+  await boardSavePost(boardStorage.value);
 };
 
 // 현재 이미지 인덱스를 추적하는 ref 생성
@@ -57,22 +71,13 @@ const dots = computed(() =>
 
       <div class="slider-container">
         <div class="slides">
-          <img
-            v-for="(imageCid, index) in props.data.boardFileCid"
-            :key="imageCid"
-            :src="`https://gateway.pinata.cloud/ipfs/${imageCid}`"
-            :class="{ active: index === currentImageIndex }"
-          />
+          <img v-for="(imageCid, index) in props.data.boardFileCid" :key="imageCid"
+            :src="`https://gateway.pinata.cloud/ipfs/${imageCid}`" :class="{ active: index === currentImageIndex }" />
         </div>
         <!-- 네비게이션 도트 -->
         <div class="navigation-dots">
-          <span
-            v-for="(isActive, index) in dots"
-            :key="index"
-            class="dot"
-            :class="{ active: isActive }"
-            @click="selectImage(index)"
-          ></span>
+          <span v-for="(isActive, index) in dots" :key="index" class="dot" :class="{ active: isActive }"
+            @click="selectImage(index)"></span>
         </div>
       </div>
       <div class="boardContent">
@@ -83,25 +88,13 @@ const dots = computed(() =>
         <!-- 아이콘 버튼들 -->
       </div>
       <div class="modal-footer-button">
-        <button
-          class="icon-button"
-          :class="{ active: isLiked }"
-          @click="toggleLike"
-        >
+        <button class="icon-button" :class="{ active: isLiked }" @click="toggleLike">
           <i class="fa-regular fa-heart"></i>
         </button>
-        <button
-          class="icon-button"
-          :class="{ active: isShared }"
-          @click="toggleShare"
-        >
+        <button class="icon-button" :class="{ active: isShared }" @click="toggleShare">
           <i class="fa-solid fa-share-nodes"></i>
         </button>
-        <button
-          class="icon-button"
-          :class="{ active: isSaved }"
-          @click="toggleSave"
-        >
+        <button class="icon-button" :class="{ active: isSaved }" @click="toggleSave">
           <i class="fa-regular fa-bookmark"></i>
         </button>
       </div>
@@ -117,6 +110,7 @@ const dots = computed(() =>
 
 <style scoped>
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css");
+
 .modal-card {
   background: #fff;
   border-radius: 15px;
@@ -278,15 +272,19 @@ img {
   0% {
     transform: translateX(0px);
   }
+
   25% {
     transform: translateX(-5px);
   }
+
   50% {
     transform: translateX(5px);
   }
+
   75% {
     transform: translateX(-5px);
   }
+
   100% {
     transform: translateX(0px);
   }
@@ -295,7 +293,9 @@ img {
 .icon-button:hover {
   animation: shake 0.5s ease-in-out infinite;
 }
+
 .icon-button.active i {
-  color: #d9534f; /* 또는 원하는 색상 코드 */
+  color: #d9534f;
+  /* 또는 원하는 색상 코드 */
 }
 </style>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useBoardStore } from "@/stores/board";
 import { storeToRefs } from "pinia";
 
@@ -11,9 +11,10 @@ import CommonCardModal from "../commons/modal/CommonCardModal.vue";
 const boardStore = useBoardStore();
 const { fetchPosts, fetchMorePosts } = boardStore;
 const { posts } = storeToRefs(boardStore);
-const isLoading = ref(false);
+
 // 활성화된 모달의 데이터를 저장하는 ref
 const activeModal = ref(null);
+const isLoading = ref(false);
 
 // 모달을 표시하는 함수
 const showModal = (event, item) => {
@@ -21,10 +22,6 @@ const showModal = (event, item) => {
   activeModal.value = item;
 };
 
-// 모달을 닫는 함수
-const closeModal = () => {
-  activeModal.value = null;
-};
 
 $(function () {
   var $sidebar = $(".message-form"),
@@ -45,15 +42,44 @@ $(function () {
 
 const handleScroll = async (event) => {
   const { scrollTop, clientHeight, scrollHeight } = event.target;
-
+  console.log(scrollTop + clientHeight);
+  console.log(scrollHeight - 5);
   // 스크롤이 하단에 도달했는지 확인
   if (scrollTop + clientHeight >= scrollHeight - 5 && !isLoading.value) {
+    console.log("gdd");
     isLoading.value = true;
     await fetchMorePosts(); // 추가 게시글 로드
     isLoading.value = false;
   }
 };
 
+
+window.addEventListener('scroll', async () => {
+  // 문서의 전체 높이
+  let documentHeight = document.body.scrollHeight;
+
+  // 현재 스크롤 위치 (스크롤된 높이 + 현재 보이는 창의 높이)
+  let currentScrollPosition = window.innerHeight + window.scrollY;
+
+  // 스크롤이 맨 아래에 도달했는지 검사
+  if (currentScrollPosition >= documentHeight && !isLoading.value) {
+    isLoading.value = true;
+  }
+});
+
+watch(isLoading, (newValue) => {
+  if (newValue === true) {
+    // isLoading이 true가 되면 실행할 함수
+    handleLoadMorePosts();
+  }
+});
+
+async function handleLoadMorePosts() {
+  await fetchMorePosts(); // 추가 게시글 로드
+  // 추가 게시글을 로드하는 로직
+  // 함수 실행 후 isLoading을 다시 false로 설정하여 다음 스크롤 이벤트를 대비함
+  isLoading.value = false;
+}
 onMounted(async () => {
   await fetchPosts(); // 초기 게시글 로드
 });
@@ -64,12 +90,7 @@ onMounted(async () => {
     <!-- 폼 내용 -->
     <div class="board-form">
       <!-- 폼 내용 -->
-      <CommonCard
-        v-for="post in posts"
-        :key="post.id"
-        :data="post"
-        @click="showModal($event, post)"
-      />
+      <CommonCard v-for="post in posts" :key="post.id" :data="post" @click="showModal($event, post)" />
     </div>
     <MessageForm class="message-form" />
 
@@ -95,6 +116,8 @@ onMounted(async () => {
   /* sidebar 너비만큼 여백 설정 */
   margin-right: 5%;
   margin-bottom: 3%;
+  height: 100vh;
+  /* 컨테이너에 스크롤을 추가 */
 }
 
 .board-form {
@@ -166,13 +189,16 @@ onMounted(async () => {
 .fade-leave-active {
   transition: opacity 0.3s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
 }
+
 .fade-enter-to,
 .fade-leave-from {
   opacity: 1;
 }
+
 /* 나머지 스타일... */
 </style>

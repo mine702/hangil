@@ -1,9 +1,26 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import KakaoMap from "@/components/commons/map/KakaoMap.vue";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { usePlanStore } from "@/stores/plan";
+
+// mine 추가 
+import { useBoardStore } from "@/stores/board";
+import { useMemberStore } from "@/stores/member";
+
+const memberStore = useMemberStore();
+const boardStore = useBoardStore();
+
+const { userInfo } = storeToRefs(memberStore);
+const { boardStorageContent } = storeToRefs(boardStore);
+const { boardStorage } = boardStore;
+
+onMounted(async () => {
+  await boardStorage(userInfo.value.userId);
+  console.log(boardStorageContent.value);
+})
+// mine 추가 
 
 // 계획 제목
 const text = ref("클릭하여 제목을 편집해주세요");
@@ -133,13 +150,8 @@ const savePlan = async () => {
       <div class="col" v-for="list in lists" :key="list.id">
         <!-- 각 리스트에 대한 컨테이너 -->
         <transition-group :name="`slide-${list.id}`" tag="div">
-          <div
-            class="item"
-            :class="{ clicked: clickedItem === item }"
-            v-for="item in list.numberList"
-            :key="item.content"
-            @click="moveItem(item, list.id)"
-          >
+          <div class="item" :class="{ clicked: clickedItem === item }" v-for="item in list.numberList" :key="item.content"
+            @click="moveItem(item, list.id)">
             {{ item.content }}
           </div>
         </transition-group>
