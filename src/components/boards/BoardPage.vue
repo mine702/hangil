@@ -1,15 +1,29 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useBoardStore } from "@/stores/board";
+import { storeToRefs } from "pinia";
 
 import $ from "jquery";
 import CommonCard from "../commons/CommonCard.vue";
 import MessageForm from "./forms/MessageForm.vue";
-import CardModal from "../commons/modal/CardModal.vue";
+import CommonCardModal from "../commons/modal/CommonCardModal.vue";
 
-const isModalVisible = ref(false); // 모달 표시 상태
+const boardStore = useBoardStore();
+const { fetchPosts, fetchMorePosts } = boardStore;
+const { posts } = storeToRefs(boardStore);
+const isLoading = ref(false);
+// 활성화된 모달의 데이터를 저장하는 ref
+const activeModal = ref(null);
 
-const handleCardClick = () => {
-  isModalVisible.value = true; // 모달 표시 상태 토글
+// 모달을 표시하는 함수
+const showModal = (event, item) => {
+  event.preventDefault();
+  activeModal.value = item;
+};
+
+// 모달을 닫는 함수
+const closeModal = () => {
+  activeModal.value = null;
 };
 
 $(function () {
@@ -28,24 +42,41 @@ $(function () {
     }
   });
 });
+
+const handleScroll = async (event) => {
+  const { scrollTop, clientHeight, scrollHeight } = event.target;
+
+  // 스크롤이 하단에 도달했는지 확인
+  if (scrollTop + clientHeight >= scrollHeight - 5 && !isLoading.value) {
+    isLoading.value = true;
+    await fetchMorePosts(); // 추가 게시글 로드
+    isLoading.value = false;
+  }
+};
+
+onMounted(async () => {
+  await fetchPosts(); // 초기 게시글 로드
+});
 </script>
 
 <template>
-  <div class="forms-container">
+  <div class="forms-container" @scroll="handleScroll">
     <!-- 폼 내용 -->
     <div class="board-form">
       <!-- 폼 내용 -->
-      <CommonCard @click="handleCardClick" />
-      <CommonCard @click="handleCardClick" />
-      <CommonCard @click="handleCardClick" />
-      <CommonCard @click="handleCardClick" />
+      <CommonCard
+        v-for="post in posts"
+        :key="post.id"
+        :data="post"
+        @click="showModal($event, post)"
+      />
     </div>
     <MessageForm class="message-form" />
 
     <!-- 모달, isModalVisible이 true일 때만 표시 -->
-    <transition name="modal">
-      <div class="modal-overlay" v-if="isModalVisible">
-        <CardModal @closeModal="isModalVisible = false" />
+    <transition name="fade">
+      <div class="modal-overlay" v-if="activeModal">
+        <CommonCardModal :data="activeModal" @close="activeModal = null" />
       </div>
     </transition>
   </div>
@@ -107,62 +138,41 @@ $(function () {
 /* 기타 스타일 */
 
 .modal {
+  /* 모달창 스타일 */
   position: fixed;
-  /* 화면에 고정 */
   top: 50%;
-  /* 상단에서 50% 위치 */
   left: 50%;
-  /* 좌측에서 50% 위치 */
   transform: translate(-50%, -50%);
-  /* 중앙 정렬을 위해 자신의 크기의 반만큼 이동 */
-  z-index: 1001;
-  /* 다른 요소들보다 위에 표시되도록 z-index 설정 */
-  /* 모달의 너비, 높이, 백그라운드, 패딩 등 추가 스타일 */
+  z-index: 1000;
+  /* 나머지 스타일 */
 }
 
-/* 활성화 되는 동안 유지될 스타일 */
-
 .modal-overlay {
-  /* 기존 스타일 유지 */
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  /* 반투명 배경 */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  /* 충분히 높은 값으로 다른 요소 위에 오게 합니다 */
-  transition: background-color 0.3s ease;
-  /* 배경색이 변화할 때 부드럽게 전환 */
+  transition: opacity 0.3s ease;
 }
 
-/* 모달이 나타나는 동안과 사라지는 동안의 배경색 전환을 위한 스타일 추가 */
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.3s ease, background-color 0.3s ease;
+/* fade 애니메이션에 대한 스타일 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
 }
-
-.modal-enter-from,
-.modal-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
-  transform: scale(0);
-  /* 모달이 처음에 작게 시작합니다 */
-  background-color: rgba(0, 0, 0, 0);
-  /* 배경색을 투명하게 시작 */
 }
-
-.modal-enter-to,
-.modal-leave-from {
+.fade-enter-to,
+.fade-leave-from {
   opacity: 1;
-  transform: scale(1);
-  /* 모달이 확대되면서 완전히 나타납니다 */
-  background-color: rgba(0, 0, 0, 0.5);
-  /* 배경색을 투명 검은색으로 전환 */
 }
-
 /* 나머지 스타일... */
 </style>

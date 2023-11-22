@@ -21,6 +21,7 @@ const boardFiles = ref([]);
 const imageUrls = ref([]);
 const placeList = ref([]);
 const selectedPlace = ref(null); // 하나의 선택된 장소를 저장할 ref
+const boardImgFiles = ref([]); // 원본 이미지
 
 const currentSlide = ref(0);
 const fading = ref(false);
@@ -70,11 +71,11 @@ const resizeImage = (file) => {
       const ctx = canvas.getContext("2d");
 
       // 캔버스의 크기를 700x900으로 설정
-      canvas.width = 600;
+      canvas.width = 700;
       canvas.height = 400;
 
       // 이미지를 캔버스에 700x900 크기로 강제로 그림
-      ctx.drawImage(image, 0, 0, 600, 400);
+      ctx.drawImage(image, 0, 0, 700, 400);
 
       canvas.toBlob((blob) => {
         resolve(
@@ -102,6 +103,7 @@ const handleFileChange = async (event) => {
     // 여기서 resizedImages는 700x900 크기로 조정된 이미지 파일의 배열입니다.
     boardFiles.value = resizedImages;
     imageUrls.value = resizedImages.map((file) => URL.createObjectURL(file));
+    boardImgFiles.value = resizedImages;
   } catch (error) {
     console.error(error);
   }
