@@ -30,8 +30,7 @@ const router = createRouter({
             {
               path: "/boardRegister",
               name: "boardRegister",
-              component: () =>
-                import("../components/boards/BoardRegisterPage.vue"),
+              component: () => import("../components/boards/BoardRegisterPage.vue"),
             },
           ],
         },
@@ -52,7 +51,7 @@ const router = createRouter({
               component: () => import("../components/myplans/MyPlans.vue"),
             },
             {
-              path: "/planPage",
+              path: "/planPage/:index",
               name: "planPage",
               component: () => import("../components/myplans/PlanPage.vue"),
             },

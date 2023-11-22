@@ -1,43 +1,32 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import router from "../../router";
+import { usePlanStore } from "@/stores/plan";
 
 let items = ref([
   {
     title: "Daejoen",
     num: "1",
-    imgSrc:
-      "https://media.istockphoto.com/id/949299844/it/foto/vista-prospettica-dellesterno-delledificio-contemporaneo.jpg?s=612x612&w=0&k=20&c=_DR1aRHuTEV3EYBJo1ZXq1pF4SgwB9EVWQLaBj4sC5g=",
   },
   {
     title: "Seoul",
     num: "2",
-    imgSrc:
-      "https://media.istockphoto.com/id/1150545984/it/foto/palazzo-moderno-di-lusso-con-piscina.jpg?s=612x612&w=0&k=20&c=Pbrai_VGc9tUviMCF1UaBErdS1YGyIVWsD29jzMZwTY=",
   },
   {
     title: "Busan",
     num: "3",
-    imgSrc:
-      "https://media.istockphoto.com/id/1214351345/it/foto/guardando-direttamente-lo-skyline-del-quartiere-finanziario-nel-centro-di-londra-immagine-di.jpg?s=612x612&w=0&k=20&c=oNNbPzPvcQ-4RA6AeatNIxHQIafBiXmDRtUUY0Ska-I=",
   },
   {
     title: "Jeju",
     num: "4",
-    imgSrc:
-      "https://media.istockphoto.com/id/904390980/it/foto/foto-di-architettura-contemporanea-astratta.jpg?s=612x612&w=0&k=20&c=_P4Wmx5nq5MeDuimpNklKCBlrLovmCyd9lfiMKeJZDs=",
   },
   {
     title: "Japan",
-    num: "4",
-    imgSrc:
-      "https://media.istockphoto.com/id/904390980/it/foto/foto-di-architettura-contemporanea-astratta.jpg?s=612x612&w=0&k=20&c=_P4Wmx5nq5MeDuimpNklKCBlrLovmCyd9lfiMKeJZDs=",
+    num: "5",
   },
   {
     title: "Sydney",
-    num: "4",
-    imgSrc:
-      "https://media.istockphoto.com/id/904390980/it/foto/foto-di-architettura-contemporanea-astratta.jpg?s=612x612&w=0&k=20&c=_P4Wmx5nq5MeDuimpNklKCBlrLovmCyd9lfiMKeJZDs=",
+    num: "6",
   },
 ]);
 let progress = ref(0);
@@ -48,10 +37,14 @@ const speedWheel = 0.05; // 휠 스크롤 속도 조정
 const speedDrag = 0.1; // 드래그 속도 조정
 let nowIdx = ref(0);
 
-const handleItemClick = (index) => {
+const planStore = usePlanStore();
+// const { isLogin } = storeToRefs(memberStore);
+const { detailPlan } = planStore;
+
+const handleItemClick = async (index) => {
   if (index === nowIdx.value) {
-    router.push({ path: "PlanPage" });
-    console.log("작동완료!!!!");
+    await detailPlan(index + 1);
+    router.push({ name: "planPage", params: { index: index + 1 } });
   } else {
     progress.value = (index / items.value.length) * 100 + 10;
     animate();
@@ -93,8 +86,7 @@ const handleMouseMove = (event) => {
 
 const handleMouseDown = (event) => {
   isDown.value = true;
-  startX.value =
-    event.clientX || (event.touches && event.touches[0].clientX) || 0;
+  startX.value = event.clientX || (event.touches && event.touches[0].clientX) || 0;
 };
 
 const handleMouseUp = () => {
@@ -130,7 +122,7 @@ onMounted(() => {
       <div class="carousel-box">
         <div class="title">{{ item.title }}</div>
         <div class="num">{{ item.num }}</div>
-        <img :src="item.imgSrc" />
+        <img :src="`https://source.unsplash.com/300x225/?nature`" />
       </div>
     </div>
   </div>

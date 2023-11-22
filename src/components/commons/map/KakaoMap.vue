@@ -4,7 +4,6 @@ import { ref, watch, onMounted } from "vue";
 var map;
 const positions = ref([]);
 const markers = ref([]);
-
 const props = defineProps({ lists: Object, selectLists: Object });
 
 onMounted(() => {
@@ -12,8 +11,9 @@ onMounted(() => {
     initMap();
   } else {
     const script = document.createElement("script");
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${import.meta.env.VITE_KAKAO_MAP_SERVICE_KEY
-      }&libraries=services,clusterer`;
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${
+      import.meta.env.VITE_KAKAO_MAP_SERVICE_KEY
+    }&libraries=services,clusterer`;
     /* global kakao */
     script.onload = () => kakao.maps.load(() => initMap());
     document.head.appendChild(script);
@@ -24,32 +24,15 @@ watch(
   () => props.lists,
   () => {
     const markList = props.lists[1].numberList;
-    // 쓰지않는 컨텐츠 리스트 저장
-    const unMarkList = props.lists[0].numberList;
-    console.log(unMarkList);
+    positions.value = [];
+
     markList.forEach((list) => {
       let obj = {};
-      obj.latlng = new kakao.maps.LatLng(
-        list.boardLatitude,
-        list.boardLongitude
-      );
+      obj.latlng = new kakao.maps.LatLng(list.boardLatitude, list.boardLongitude);
       obj.title = list.content;
       positions.value.push(obj);
     });
 
-    // console.dir(listNotUse);
-    let lenght = markers.value.length;
-    deleteAllMarkers();
-    unMarkList.forEach((deleteContent) => {
-      // for (var i = 0; i < markers.value.length; i++) {
-      //   if (markers.value[i].getTitle() === deleteContent.content) {
-      //     // console.log("여기");
-      //     markers.value[i].setMap(null);
-      //     markers.value.splice(i, 1);
-      //   }
-      // }
-    });
-    // console.log(markers.value.length);
     loadMarkers();
   },
   { deep: true }
@@ -63,11 +46,7 @@ const initMap = () => {
   };
   map = new kakao.maps.Map(container, options);
 
-  if (props.selectLists && props.selectLists.value) {
-    loadMarkers();
-  } else {
-    console.log("마크안찍힘");
-  }
+  loadMarkers();
 };
 
 const loadMarkers = () => {
@@ -82,6 +61,15 @@ const loadMarkers = () => {
 
   // 마커를 생성합니다
   markers.value = [];
+
+  const markList = props.lists[1].numberList;
+  markList.forEach((list) => {
+    let obj = {};
+    obj.latlng = new kakao.maps.LatLng(list.boardLatitude, list.boardLongitude);
+    obj.title = list.content;
+    positions.value.push(obj);
+  });
+
   positions.value.forEach((position) => {
     const marker = new kakao.maps.Marker({
       map: map, // 마커를 표시할 지도
@@ -99,7 +87,7 @@ const loadMarkers = () => {
     (bounds, position) => bounds.extend(position.latlng),
     new kakao.maps.LatLngBounds()
   );
-
+  if (markers.value.length === 0) return;
   map.setBounds(bounds);
 };
 
@@ -107,20 +95,6 @@ const loadMarkers = () => {
 const deleteAllMarkers = () => {
   if (markers.value.length > 0) {
     markers.value.forEach((marker) => marker.setMap(null));
-  }
-};
-
-// selectedList에서 제거된 요소 마커만 삭제
-const deleteMarker = (item) => {
-  // console.log("아이템", item);
-  const markerIndex = markers.value.findIndex((marker) => {
-    console.log(item.content);
-    marker.getTitle() === item.content;
-  });
-  // console.log("인덱스", markerIndex);
-  // console.log("마커", markers);
-  if (markers.value[markerIndex] !== undefined) {
-    markers.value[markerIndex].setMap(null);
   }
 };
 </script>

@@ -1,6 +1,9 @@
 <script setup>
-import { reactive, ref, onMounted } from "vue";
+import { ref } from "vue";
 import KakaoMap from "@/components/commons/map/KakaoMap.vue";
+import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+import { usePlanStore } from "@/stores/plan";
 
 // 계획 제목
 const text = ref("클릭하여 제목을 편집해주세요");
@@ -21,16 +24,19 @@ const lists = ref([
     id: 1,
     numberList: [
       {
+        boardId: 1,
         content: "스시하린",
         boardLatitude: 36.3582732,
         boardLongitude: 127.3032399,
       },
       {
+        boardId: 2,
         content: "내 집",
         boardLatitude: 36.358548,
         boardLongitude: 127.3026399,
       },
       {
+        boardId: 3,
         content: "맥도날드",
         boardLatitude: 36.3543351,
         boardLongitude: 127.3403842,
@@ -47,7 +53,8 @@ const lists = ref([
 const selectedLists = ref([]);
 
 // 클릭으로 아이템을 이동시키는 메소드
-const moveItem = (clickedItem, listId) => {
+const moveItem = (clickedItem) => {
+  console.log(selectedLists);
   let sourceListIdx, sourceItemIdx, targetListIdx;
 
   // 해당 아이템과 속한 리스트를 찾습니다.
@@ -62,10 +69,7 @@ const moveItem = (clickedItem, listId) => {
   });
   // 찾은 아이템을 이동시킵니다.
   if (sourceListIdx !== undefined) {
-    const [movedItem] = lists.value[sourceListIdx].numberList.splice(
-      sourceItemIdx,
-      1
-    );
+    const [movedItem] = lists.value[sourceListIdx].numberList.splice(sourceItemIdx, 1);
     lists.value[targetListIdx].numberList.push(movedItem);
   }
 
@@ -80,8 +84,30 @@ const moveItem = (clickedItem, listId) => {
       selectedLists.value.splice(indexInSelected, 1);
     }
   }
+};
 
-  // console.log(selectedLists.value);
+// plan들의 id가 들어있는 배열
+const plans = ref([
+  {
+    planId: null,
+  },
+]);
+
+const planStore = usePlanStore();
+const { planInfo } = storeToRefs(planStore);
+const { addPlan } = planStore;
+const router = useRouter();
+// plan 저장
+const savePlan = async () => {
+  try {
+    await addPlan(plans.value);
+    router.push({ path: "myPlans" });
+  } catch (error) {
+    console.log(error);
+    setTimeout(() => {
+      loginError.value = false;
+    }, 3000); // 3초 후 메시지 숨김
+  }
 };
 </script>
 
@@ -94,16 +120,11 @@ const moveItem = (clickedItem, listId) => {
           <div v-if="text === ''">클릭하여 제목을 편집해주세요</div>
           {{ text }}
         </div>
-        <input
-          v-else
-          v-model="text"
-          @blur="stopEditing"
-          placeholder="제목 입력"
-        />
+        <input v-else v-model="text" @blur="stopEditing" placeholder="제목 입력" />
       </div>
       <!-- 저장 및 공유 버튼 -->
       <div class="buttons">
-        <div class="save-btn effect">저장</div>
+        <div class="save-btn effect" @click="savePlan">저장</div>
         <div class="share-btn effect">공유</div>
       </div>
     </div>
