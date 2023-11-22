@@ -112,8 +112,13 @@ const moveItem = (clickedItem, listId) => {
       <div class="col" v-for="list in lists" :key="list.id">
         <!-- 각 리스트에 대한 컨테이너 -->
         <transition-group :name="`slide-${list.id}`" tag="div">
-          <div class="item" :class="{ clicked: clickedItem === item }" v-for="item in list.numberList" :key="item.content"
-            @click="moveItem(item, list.id)">
+          <div
+            class="item"
+            :class="{ clicked: clickedItem === item }"
+            v-for="item in list.numberList"
+            :key="item.content"
+            @click="moveItem(item, list.id)"
+          >
             {{ item.content }}
           </div>
         </transition-group>
@@ -302,4 +307,5 @@ const moveItem = (clickedItem, listId) => {
   height: 90%;
   background-color: rgb(92, 103, 141);
   border-radius: 30px;
-}</style>
+}
+</style>

@@ -41,14 +41,22 @@ const router = createRouter({
           component: () => import("../components/mypage/MyPage.vue"),
         },
         {
-          path: "/myPlans",
-          name: "myPlans",
-          component: () => import("../components/myplans/MyPlans.vue"),
-        },
-        {
-          path: "/PlanPage",
-          name: "PlanPage",
-          component: () => import("../components/myplans/PlanPage.vue"),
+          path: "/planView",
+          name: "planView",
+          component: () => import("../views/ThePlanView.vue"),
+          redirect: { name: "myPlans" },
+          children: [
+            {
+              path: "/myPlans",
+              name: "myPlans",
+              component: () => import("../components/myplans/MyPlans.vue"),
+            },
+            {
+              path: "/planPage",
+              name: "planPage",
+              component: () => import("../components/myplans/PlanPage.vue"),
+            },
+          ],
         },
         {
           path: "/searchPage",

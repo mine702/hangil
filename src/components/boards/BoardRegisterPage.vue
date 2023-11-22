@@ -35,23 +35,23 @@ const boardDTO = ref({
   userId: userInfo.value.userId,
   boardTitle: "",
   boardContent: "",
-  boardFileCID: [],
+  boardFileCid: [],
   boardPlace: "",
   boardLatitude: "",
   boardLongitude: "",
-  boardTags: [],
+  hashTagContent: [],
 });
 
 const addTag = () => {
   // 입력된 태그가 있다면 배열에 추가
   if (boardTag.value.trim()) {
-    boardDTO.value.boardTags.push(boardTag.value.trim());
+    boardDTO.value.hashTagContent.push(boardTag.value.trim());
     boardTag.value = ""; // 입력 필드 초기화
   }
 };
 
 const removeTag = (index) => {
-  boardDTO.value.boardTags.splice(index, 1); // 배열에서 해당 인덱스의 태그를 제거
+  boardDTO.value.hashTagContent.splice(index, 1); // 배열에서 해당 인덱스의 태그를 제거
 };
 
 // 스페이스바를 눌렀을 때 addTag 함수를 호출
@@ -131,14 +131,14 @@ const submitImage = async () => {
   }
   try {
     await submitImages(formData);
-    boardDTO.value.boardFileCID = imgCid.value;
+    boardDTO.value.boardFileCid = imgCid.value;
 
     await boardSubmit(boardDTO.value);
 
     isCompleted.value = true; // 완료 상태로 설정
-    // setTimeout(() => {
-    //   router.push("/home"); // 사용자를 다른 페이지로 리디렉션
-    // }, 1000); // 3초 후 페이지 이동
+    setTimeout(() => {
+      router.push("/home"); // 사용자를 다른 페이지로 리디렉션
+    }, 1000); // 3초 후 페이지 이동
   } catch (error) {
     console.error(error);
     // 에러 처리 로직
@@ -182,44 +182,74 @@ const selectPlace = (place) => {
         <input type="text" placeholder="제목" v-model="boardDTO.boardTitle" />
 
         <!-- 카카오맵 api -->
-        <input type="text" placeholder="장소 검색" v-model="boardPlaces" @input="searchPlaces" />
+        <input
+          type="text"
+          placeholder="장소 검색"
+          v-model="boardPlaces"
+          @input="searchPlaces"
+        />
         <div class="list-container">
           <ul v-if="placeList.length" class="place-list">
             <li v-for="(place, index) in placeList" :key="index">
               <a href="#" @click.prevent="selectPlace(place)">
                 {{ place.place_name }}
-                <span v-if="selectedPlace && place.id === selectedPlace.id" class="checkmark">✔</span>
+                <span
+                  v-if="selectedPlace && place.id === selectedPlace.id"
+                  class="checkmark"
+                  >✔</span
+                >
               </a>
             </li>
           </ul>
         </div>
         <!-- 카카오맵 api -->
         <textarea placeholder="내용" v-model="boardDTO.boardContent"></textarea>
-        <input type="file" multiple accept=".png, .jpg, .jpeg" @change="handleFileChange" />
+        <input
+          type="file"
+          multiple
+          accept=".png, .jpg, .jpeg"
+          @change="handleFileChange"
+        />
 
         <div v-if="imageUrls.length" class="slider">
           <button class="slide-btn left" @click="previousSlide">
             &#10094;
           </button>
-          <img :src="imageUrls[currentSlide]" class="slide-image" :class="{ fading: fading }" />
+          <img
+            :src="imageUrls[currentSlide]"
+            class="slide-image"
+            :class="{ fading: fading }"
+          />
           <button class="slide-btn right" @click="nextSlide">&#10095;</button>
         </div>
         <!-- 태그 입력 필드 -->
-        <input type="text" placeholder="태그" v-model="boardTag" @keydown.space="handleSpace" />
+        <input
+          type="text"
+          placeholder="태그"
+          v-model="boardTag"
+          @keydown.space="handleSpace"
+        />
 
         <!-- 입력된 태그들을 리스트로 표시 -->
         <transition-group name="tag" class="tags-container" tag="div">
-          <span class="tag" v-for="(tag, index) in boardDTO.boardTags" :key="tag">
+          <span
+            class="tag"
+            v-for="(tag, index) in boardDTO.hashTagContent"
+            :key="tag"
+          >
             {{ tag }}
             <button class="delete-tag" @click="removeTag(index)">x</button>
           </span>
         </transition-group>
         <!-- 버튼에 완료 상태에 따라 다른 클래스 적용 -->
-        <button @click="submitImage" :class="{
-          'loading-button': isLoading,
-          'completed-button': isCompleted,
-          submitButton: !isLoading && !isCompleted,
-        }">
+        <button
+          @click="submitImage"
+          :class="{
+            'loading-button': isLoading,
+            'completed-button': isCompleted,
+            submitButton: !isLoading && !isCompleted,
+          }"
+        >
           <span v-if="isLoading" class="loading-spinner">
             <div class="spinner"></div>
           </span>
@@ -539,7 +569,6 @@ button:hover {
 }
 
 @keyframes bounce {
-
   0%,
   100% {
     transform: translateY(0);

@@ -107,7 +107,7 @@ const logout = async () => {
       </router-link>
     </li>
     <li>
-      <router-link :to="'/myPlans'">
+      <router-link :to="'/planView'">
         <span class="fa fa-paper-plane" aria-hidden="true"></span>Plans
       </router-link>
     </li>
