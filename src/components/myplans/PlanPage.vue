@@ -1,78 +1,6 @@
 <script setup>
 import { reactive, ref, onMounted } from "vue";
-import { listSido, listGugun } from "@/api/map";
 import KakaoMap from "@/components/commons/map/KakaoMap.vue";
-
-// 지도 관련 변수
-const { VITE_OPEN_API_SERVICE_KEY } = import.meta.env;
-const sidoList = ref([]);
-const gugunList = ref([{ text: "구군선택", value: "" }]);
-const chargingStations = ref([]);
-const selectStation = ref({});
-
-const param = ref({
-  serviceKey: VITE_OPEN_API_SERVICE_KEY,
-  pageNo: 1,
-  numOfRows: 20,
-  zscode: 0,
-});
-
-const getSidoList = () => {
-  listSido(
-    ({ data }) => {
-      let options = [];
-      options.push({ text: "시도선택", value: "" });
-      data.forEach((sido) => {
-        options.push({ text: sido.sidoName, value: sido.sidoCode });
-      });
-      sidoList.value = options;
-    },
-    (err) => {
-      console.log(err);
-    }
-  );
-};
-
-const onChangeSido = (val) => {
-  listGugun(
-    { sido: val },
-    ({ data }) => {
-      let options = [];
-      options.push({ text: "구군선택", value: "" });
-      data.forEach((gugun) => {
-        options.push({ text: gugun.gugunName, value: gugun.gugunCode });
-      });
-      gugunList.value = options;
-    },
-    (err) => {
-      console.log(err);
-    }
-  );
-};
-
-const onChangeGugun = (val) => {
-  param.value.zscode = val;
-  getChargingStations();
-};
-const getChargingStations = () => {
-  listStations(
-    param.value,
-    ({ data }) => {
-      chargingStations.value = data.items[0].item;
-    },
-    (err) => {
-      console.log(err);
-    }
-  );
-};
-
-const viewStation = (station) => {
-  selectStation.value = station;
-};
-
-onMounted(() => {
-  getSidoList();
-});
 
 // 계획 제목
 const text = ref("클릭하여 제목을 편집해주세요");
@@ -88,16 +16,25 @@ const stopEditing = () => {
 };
 
 // 계획 단위별 조정
-const lists = reactive([
+const lists = ref([
   {
     id: 1,
     numberList: [
-      { content: "문자열 테스트 1" },
-      { content: "문자열 테스트 2" },
-      { content: "문자열 테스트 3" },
-      { content: "문자열 테스트 4" },
-      { content: "문자열 테스트 5" },
-      { content: "문자열 테스트 6" },
+      {
+        content: "스시하린",
+        boardLatitude: 36.3582732,
+        boardLongitude: 127.3032399,
+      },
+      {
+        content: "내 집",
+        boardLatitude: 36.358548,
+        boardLongitude: 127.3026399,
+      },
+      {
+        content: "맥도날드",
+        boardLatitude: 36.3543351,
+        boardLongitude: 127.3403842,
+      },
     ],
   },
   {
@@ -106,12 +43,15 @@ const lists = reactive([
   },
 ]);
 
+// 클릭한 객체 저장할 배열
+const selectedLists = ref([]);
+
 // 클릭으로 아이템을 이동시키는 메소드
 const moveItem = (clickedItem, listId) => {
   let sourceListIdx, sourceItemIdx, targetListIdx;
 
   // 해당 아이템과 속한 리스트를 찾습니다.
-  lists.forEach((list, listIdx) => {
+  lists.value.forEach((list, listIdx) => {
     const itemIdx = list.numberList.findIndex((item) => item === clickedItem);
     if (itemIdx !== -1) {
       sourceListIdx = listIdx;
@@ -120,13 +60,28 @@ const moveItem = (clickedItem, listId) => {
       targetListIdx = listIdx === 0 ? 1 : 0;
     }
   });
-
   // 찾은 아이템을 이동시킵니다.
   if (sourceListIdx !== undefined) {
-    const [movedItem] = lists[sourceListIdx].numberList.splice(sourceItemIdx, 1);
-    lists[targetListIdx].numberList.push(movedItem);
+    const [movedItem] = lists.value[sourceListIdx].numberList.splice(
+      sourceItemIdx,
+      1
+    );
+    lists.value[targetListIdx].numberList.push(movedItem);
   }
-  clickedItem.value = clickedItemObj; // 클릭된 아이템을 저장
+
+  // 누른게 왼쪽에 있었을때(계획에 추가할때)
+  if (sourceListIdx === 0) {
+    selectedLists.value.push(clickedItem);
+  }
+  // 누른게 오른쪽에 있었을때
+  else {
+    const indexInSelected = selectedLists.value.indexOf(clickedItem);
+    if (indexInSelected !== -1) {
+      selectedLists.value.splice(indexInSelected, 1);
+    }
+  }
+
+  // console.log(selectedLists.value);
 };
 </script>
 
@@ -152,19 +107,14 @@ const moveItem = (clickedItem, listId) => {
       <div class="col" v-for="list in lists" :key="list.id">
         <!-- 각 리스트에 대한 컨테이너 -->
         <transition-group :name="`slide-${list.id}`" tag="div">
-          <div
-            class="item"
-            :class="{ clicked: clickedItem === item }"
-            v-for="item in list.numberList"
-            :key="item.content"
-            @click="moveItem(item, list.id)"
-          >
+          <div class="item" :class="{ clicked: clickedItem === item }" v-for="item in list.numberList" :key="item.content"
+            @click="moveItem(item, list.id)">
             {{ item.content }}
           </div>
         </transition-group>
       </div>
       <div class="map">
-        <KakaoMap :stations="chargingStations" :selectStation="selectStation" />
+        <KakaoMap :lists="lists" :selectLists="selectedLists" />
       </div>
     </div>
   </div>
@@ -186,8 +136,10 @@ const moveItem = (clickedItem, listId) => {
 
 .plan-title {
   font-size: 30px;
-  width: 480px; /* 고정된 너비 */
-  height: 70%; /* 고정된 높이 */
+  width: 480px;
+  /* 고정된 너비 */
+  height: 70%;
+  /* 고정된 높이 */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
@@ -280,36 +232,48 @@ const moveItem = (clickedItem, listId) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 230px; /* 리스트의 너비를 고정 */
-  max-width: 100%; /* 최대 너비를 100%로 설정 */
+  width: 230px;
+  /* 리스트의 너비를 고정 */
+  max-width: 100%;
+  /* 최대 너비를 100%로 설정 */
   height: 90%;
   background-color: #fff;
   border: 1px solid lightgrey;
   margin: 10px;
   border-radius: 8px;
   padding: 10px;
-  overflow-x: hidden; /* 가로 스크롤 숨김 */
-  overflow-y: auto; /* 세로 스크롤 자동 */
+  overflow-x: hidden;
+  /* 가로 스크롤 숨김 */
+  overflow-y: auto;
+  /* 세로 스크롤 자동 */
 }
 
 .mid .col .item {
   /* 리스트 아이템 스타일링 */
-  width: 100%; /* 너비를 부모의 100%로 조정 */
-  margin: 10px 0; /* 위아래 마진으로 아이템 간격 조정 */
-  padding: 15px 50px; /* 내부 여백을 더 크게 조정 */
+  width: 100%;
+  /* 너비를 부모의 100%로 조정 */
+  margin: 10px 0;
+  /* 위아래 마진으로 아이템 간격 조정 */
+  padding: 15px 50px;
+  /* 내부 여백을 더 크게 조정 */
   background-color: #363c5a;
   color: #fff;
-  border-radius: 5px; /* 모서리 둥글기 */
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  border-radius: 5px;
+  /* 모서리 둥글기 */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  /* 그림자 효과 */
   cursor: pointer;
-  margin-bottom: 10px; /* 리스트 항목 간의 간격 */
-  transition: all 0.5s ease; /* 아이템 이동에 부드러운 전환 효과 추가 */
+  margin-bottom: 10px;
+  /* 리스트 항목 간의 간격 */
+  transition: all 0.5s ease;
+  /* 아이템 이동에 부드러운 전환 효과 추가 */
 }
 
 /* 왼쪽 리스트에서 항목이 나갈 때 오른쪽으로 나가는 애니메이션 */
 .slide-1-leave-active.item {
   transition: transform 0.5s ease, opacity 0.5s ease;
 }
+
 .slide-1-leave-to.item {
   transform: translateX(100%);
   opacity: 0;
@@ -319,6 +283,7 @@ const moveItem = (clickedItem, listId) => {
 .slide-2-leave-active.item {
   transition: transform 0.5s ease, opacity 0.5s ease;
 }
+
 .slide-2-leave-to.item {
   transform: translateX(-100%);
   opacity: 0;
@@ -332,5 +297,4 @@ const moveItem = (clickedItem, listId) => {
   height: 90%;
   background-color: rgb(92, 103, 141);
   border-radius: 30px;
-}
-</style>
+}</style>

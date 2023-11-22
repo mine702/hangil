@@ -2,6 +2,10 @@ import { localAxios } from "@/util/http-commons";
 
 const local = localAxios();
 
+function boardWrite(param, success, fail) {
+  local.post(`/board/write`, param).then(success).catch(fail);
+}
+
 function listArticle(param, success, fail) {
   local.get(`/board`, { params: param }).then(success).catch(fail);
 }
@@ -34,4 +38,5 @@ export {
   getModifyArticle,
   modifyArticle,
   deleteArticle,
+  boardWrite,
 };

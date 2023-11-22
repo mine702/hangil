@@ -10,6 +10,7 @@ const memberStore = useMemberStore();
 const { isLogin } = storeToRefs(memberStore);
 const { userLogin, getUserInfo, userRegist } = memberStore;
 const checkbox = ref(null);
+const loginError = ref(false);
 
 const loginUser = ref({
   userId: null,
@@ -24,11 +25,17 @@ const registerUser = ref({
 });
 
 const login = async () => {
-  await userLogin(loginUser.value);
-  let token = sessionStorage.getItem("accessToken");
-  if (isLogin) {
-    getUserInfo(token);
-    router.push("/home");
+  try {
+    await userLogin(loginUser.value)
+    let token = sessionStorage.getItem("accessToken");
+    if (isLogin) {
+      getUserInfo(token);
+      router.push("/home");
+    }
+  }
+  catch (error) {
+    loginError.value = true; // 로그인 실패 시 오류 메시지 표시
+    setTimeout(() => { loginError.value = false; }, 3000); // 3초 후 메시지 숨김
   }
 };
 
@@ -42,13 +49,7 @@ const signUp = async () => {
   <div class="col-12 text-center align-self-center py-5">
     <div class="section pb-5 pt-5 pt-sm-2 text-center">
       <h6 class="mb-0 pb-3"><span>Log In </span><span>Sign Up</span></h6>
-      <input
-        class="checkbox"
-        type="checkbox"
-        id="reg-log"
-        name="reg-log"
-        ref="checkbox"
-      />
+      <input class="checkbox" type="checkbox" id="reg-log" name="reg-log" ref="checkbox" />
       <label for="reg-log"></label>
       <div class="card-3d-wrap mx-auto">
         <div class="card-3d-wrapper">
@@ -57,27 +58,13 @@ const signUp = async () => {
               <div class="section text-center">
                 <h4 class="mb-4 pb-3" style="color: white">Log In</h4>
                 <div class="form-group">
-                  <input
-                    type="text"
-                    name="loginId"
-                    class="form-style"
-                    placeholder="Your ID"
-                    id="loginId"
-                    autocomplete="off"
-                    v-model="loginUser.userId"
-                  />
+                  <input type="text" name="loginId" class="form-style" placeholder="Your ID" id="loginId"
+                    autocomplete="off" v-model="loginUser.userId" />
                   <i class="input-icon uil uil-edit"></i>
                 </div>
                 <div class="form-group mt-2">
-                  <input
-                    type="password"
-                    name="loginPass"
-                    class="form-style"
-                    placeholder="Your Password"
-                    id="loginPass"
-                    autocomplete="off"
-                    v-model="loginUser.userPw"
-                  />
+                  <input type="password" name="loginPass" class="form-style" placeholder="Your Password" id="loginPass"
+                    autocomplete="off" v-model="loginUser.userPw" />
                   <i class="input-icon uil uil-lock-alt"></i>
                 </div>
                 <a href="#" class="btn mt-4" @click.prevent="login">Login</a>
@@ -85,6 +72,8 @@ const signUp = async () => {
                   <a href="#0" class="link">Forgot your password?</a>
                 </p>
               </div>
+              <!-- 로그인 실패 메시지 -->
+              <span v-if="loginError" class="error-message">로그인 실패: 아이디나 패스워드를 확인해주세요.</span>
             </div>
           </div>
           <div class="card-back">
@@ -93,51 +82,23 @@ const signUp = async () => {
                 <h4 class="mb-4 pb-3" style="color: white">Sign Up</h4>
 
                 <div class="form-group mt-2">
-                  <input
-                    type="text"
-                    name="SignId"
-                    class="form-style"
-                    placeholder="Your ID"
-                    id="SignId"
-                    autocomplete="off"
-                    v-model="registerUser.userId"
-                  />
+                  <input type="text" name="SignId" class="form-style" placeholder="Your ID" id="SignId" autocomplete="off"
+                    v-model="registerUser.userId" />
                   <i class="input-icon uil uil-edit"></i>
                 </div>
                 <div class="form-group mt-2">
-                  <input
-                    type="password"
-                    name="SignPass"
-                    class="form-style"
-                    placeholder="Your Password"
-                    id="SignPass"
-                    autocomplete="off"
-                    v-model="registerUser.userPw"
-                  />
+                  <input type="password" name="SignPass" class="form-style" placeholder="Your Password" id="SignPass"
+                    autocomplete="off" v-model="registerUser.userPw" />
                   <i class="input-icon uil uil-lock-alt"></i>
                 </div>
                 <div class="form-group mt-2">
-                  <input
-                    type="text"
-                    name="SignName"
-                    class="form-style"
-                    placeholder="Your Name"
-                    id="SignName"
-                    autocomplete="off"
-                    v-model="registerUser.userName"
-                  />
+                  <input type="text" name="SignName" class="form-style" placeholder="Your Name" id="SignName"
+                    autocomplete="off" v-model="registerUser.userName" />
                   <i class="input-icon uil uil-user"></i>
                 </div>
                 <div class="form-group mt-2">
-                  <input
-                    type="text"
-                    name="SignNickName"
-                    class="form-style"
-                    placeholder="Your NickName"
-                    id="SignNickName"
-                    autocomplete="off"
-                    v-model="registerUser.userNickname"
-                  />
+                  <input type="text" name="SignNickName" class="form-style" placeholder="Your NickName" id="SignNickName"
+                    autocomplete="off" v-model="registerUser.userNickname" />
                   <i class="input-icon uil uil-facebook-messenger-alt"></i>
                 </div>
 
@@ -148,6 +109,7 @@ const signUp = async () => {
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -200,8 +162,8 @@ h6 span {
   left: -9999px;
 }
 
-.checkbox:checked + label,
-.checkbox:not(:checked) + label {
+.checkbox:checked+label,
+.checkbox:not(:checked)+label {
   position: relative;
   display: block;
   text-align: center;
@@ -214,8 +176,8 @@ h6 span {
   background-color: #ffeba7;
 }
 
-.checkbox:checked + label:before,
-.checkbox:not(:checked) + label:before {
+.checkbox:checked+label:before,
+.checkbox:not(:checked)+label:before {
   position: absolute;
   display: block;
   width: 36px;
@@ -234,7 +196,7 @@ h6 span {
   transition: all 0.5s ease;
 }
 
-.checkbox:checked + label:before {
+.checkbox:checked+label:before {
   transform: translateX(44px) rotate(-270deg);
 }
 
@@ -285,7 +247,7 @@ h6 span {
   transform: rotateY(180deg);
 }
 
-.checkbox:checked ~ .card-3d-wrap .card-3d-wrapper {
+.checkbox:checked~.card-3d-wrap .card-3d-wrapper {
   transform: rotateY(180deg);
 }
 
@@ -438,5 +400,10 @@ h6 span {
   background-color: #102770;
   color: #ffeba7;
   box-shadow: 0 8px 24px 0 rgba(16, 39, 112, 0.2);
+}
+
+.error-message {
+  color: red;
+  margin-top: 20px;
 }
 </style>
