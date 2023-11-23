@@ -4,34 +4,25 @@ import KakaoMap from "@/components/commons/map/KakaoMap.vue";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { usePlanStore } from "@/stores/plan";
-
-// mine 추가 
 import { useBoardStore } from "@/stores/board";
 import { useMemberStore } from "@/stores/member";
 
-const memberStore = useMemberStore();
-const boardStore = useBoardStore();
-
-const { userInfo } = storeToRefs(memberStore);
-const { boardStorageContent } = storeToRefs(boardStore);
-const { boardStorage } = boardStore;
-
-onMounted(async () => {
-  await boardStorage(userInfo.value.userId);
-  console.log(boardStorageContent.value);
-})
-// mine 추가 
-
 // 계획 제목
 const text = ref("클릭하여 제목을 편집해주세요");
+const originalText = ref(""); // 원본 제목을 저장하기 위한 ref
 const isEditing = ref(false);
 const clickedItem = ref(null); // 클릭된 아이템을 추적하기 위한 ref 생성
 
 const startEditing = () => {
+  originalText.value = text.value; // 편집을 시작하기 전에 원본 제목 저장
   isEditing.value = true;
 };
 
 const stopEditing = () => {
+  // text가 비어있지 않으면 변경사항 저장, 그렇지 않다면 원본 제목으로 복원
+  if (text.value.trim() === "") {
+    text.value = originalText.value;
+  }
   isEditing.value = false;
 };
 
@@ -66,12 +57,11 @@ const lists = ref([
   },
 ]);
 
-// 클릭한 객체 저장할 배열
+// 클릭한 객체의 boardNo를저장할 배열
 const selectedLists = ref([]);
 
 // 클릭으로 아이템을 이동시키는 메소드
 const moveItem = (clickedItem) => {
-  console.log(selectedLists);
   let sourceListIdx, sourceItemIdx, targetListIdx;
 
   // 해당 아이템과 속한 리스트를 찾습니다.
@@ -86,13 +76,16 @@ const moveItem = (clickedItem) => {
   });
   // 찾은 아이템을 이동시킵니다.
   if (sourceListIdx !== undefined) {
-    const [movedItem] = lists.value[sourceListIdx].numberList.splice(sourceItemIdx, 1);
+    const [movedItem] = lists.value[sourceListIdx].numberList.splice(
+      sourceItemIdx,
+      1
+    );
     lists.value[targetListIdx].numberList.push(movedItem);
   }
 
   // 누른게 왼쪽에 있었을때(계획에 추가할때)
   if (sourceListIdx === 0) {
-    selectedLists.value.push(clickedItem);
+    selectedLists.value.push(clickedItem.boardId);
   }
   // 누른게 오른쪽에 있었을때
   else {
@@ -103,27 +96,49 @@ const moveItem = (clickedItem) => {
   }
 };
 
-// plan들의 id가 들어있는 배열
-const plans = ref([
-  {
-    planId: null,
-  },
-]);
+const boardStore = useBoardStore();
+const { savePost } = storeToRefs(boardStore);
+
+const memberStore = useMemberStore();
+const { userInfo } = storeToRefs(memberStore);
 
 const planStore = usePlanStore();
-const { planInfo } = storeToRefs(planStore);
-const { addPlan } = planStore;
+const { addPlan, getPlansStorage } = planStore;
+const { pickPlanStorageNo, savedPlanStorage } = storeToRefs(planStore);
+
+// plan들의 id가 들어있는 배열
+const plans = ref({
+  // pinia로 가져오기
+  planStorageNo: pickPlanStorageNo.value,
+  userId: userInfo.value.userId,
+  planStorageName: text.value,
+  // savePost에서 가져오기
+  boardNo: [],
+});
+
 const router = useRouter();
 // plan 저장
 const savePlan = async () => {
+  if (text.value.trim() !== "") {
+    plans.value.planStorageName = text.value;
+  }
   try {
+    console.log("선택된 계획들", selectedLists.value);
+    for (var i = 0; i < selectedLists.value.length; i++) {
+      plans.value.boardNo.push(selectedLists.value[i]);
+    }
+    console.log("vue", plans.value);
+    // 이미 있는 보관함이면 업데이트
+    savedPlanStorage.value.forEach(async (no) => {
+      if (no === plans.value.planStorageNo) {
+        await updatePlan(plans.value);
+        return;
+      }
+    });
+    // 없는 보관함이면 추가
     await addPlan(plans.value);
-    router.push({ path: "myPlans" });
   } catch (error) {
     console.log(error);
-    setTimeout(() => {
-      loginError.value = false;
-    }, 3000); // 3초 후 메시지 숨김
   }
 };
 </script>
@@ -137,12 +152,18 @@ const savePlan = async () => {
           <div v-if="text === ''">클릭하여 제목을 편집해주세요</div>
           {{ text }}
         </div>
-        <input v-else v-model="text" @blur="stopEditing" placeholder="제목 입력" />
+        <input
+          v-else
+          v-model="text"
+          @blur="stopEditing"
+          placeholder="제목 입력"
+        />
       </div>
       <!-- 저장 및 공유 버튼 -->
       <div class="buttons">
         <div class="save-btn effect" @click="savePlan">저장</div>
         <div class="share-btn effect">공유</div>
+        <div class="delete-btn effect">삭제</div>
       </div>
     </div>
     <div class="mid">
@@ -150,8 +171,13 @@ const savePlan = async () => {
       <div class="col" v-for="list in lists" :key="list.id">
         <!-- 각 리스트에 대한 컨테이너 -->
         <transition-group :name="`slide-${list.id}`" tag="div">
-          <div class="item" :class="{ clicked: clickedItem === item }" v-for="item in list.numberList" :key="item.content"
-            @click="moveItem(item, list.id)">
+          <div
+            class="item"
+            v-for="item in list.numberList"
+            :class="{ clicked: clickedItem === item }"
+            :key="item.content"
+            @click="moveItem(item, list.id)"
+          >
             {{ item.content }}
           </div>
         </transition-group>
@@ -215,13 +241,15 @@ const savePlan = async () => {
 .buttons {
   display: flex;
   align-items: center;
+  margin-right: 10%;
 }
 
 .save-btn,
-.share-btn {
+.share-btn,
+.delete-btn {
   text-align: center;
   display: inline-block;
-  position: relative;
+  /* position: relative; */
   text-decoration: none;
   color: white;
   text-transform: capitalize;
@@ -233,7 +261,6 @@ const savePlan = async () => {
   margin: 2%;
   background: #363c5a;
   transition: all 0.2s linear 0s;
-  right: 70%;
 }
 
 .effect:before {
