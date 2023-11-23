@@ -15,8 +15,10 @@ const { boardStorageContent } = storeToRefs(boardStore);
 const { boardStorage } = boardStore;
 
 const planStore = usePlanStore();
-const { addPlan, getPlansStorage, updatePlan } = planStore;
-const { pickPlanStorageNo, savedPlanStorage } = storeToRefs(planStore);
+const { addPlan, getPlansStorage, updatePlan, getPlans, deleteStorage } =
+  planStore;
+const { pickPlanStorageNo, savedPlanStorage, savedPlanList } =
+  storeToRefs(planStore);
 
 // 클릭한 객체의 배열저장
 const selectedLists = ref([]);
@@ -25,22 +27,9 @@ const selectedLists = ref([]);
 onMounted(async () => {
   await boardStorage(userInfo.value.userId);
   await getPlansStorage();
-
-  const allItems = boardStorageContent.value;
-  const selectedItems = selectedLists.value;
-
-  console.log(allItems);
-  console.log(selectedItems);
-
-  // 선택되지 않은 요소들
-  lists.value[0].numberList = allItems.filter(
-    (item) => !selectedItems.includes(item.boardNo)
-  );
-
-  // 선택된 요소들
-  lists.value[1].numberList = allItems.filter((item) =>
-    selectedItems.includes(item.boardNo)
-  );
+  getPlansList();
+  updateLists(); // 초기 리스트 업데이트
+  // console.log("저장된 계획리스트 불러오기", savedPlanList.value);
 
   if (index > 0) {
     text.value =
@@ -49,6 +38,30 @@ onMounted(async () => {
     text.value = "클릭하여 제목을 편집해주세요";
   }
 });
+
+// boardStorageContent 및 savedPlanList가 변경될 때마다 실행될 함수
+const updateLists = () => {
+  const allItems = boardStorageContent.value.slice(); // 복사하여 사용
+  const selectedItems = savedPlanList.value;
+
+  // 선택된 항목 제외
+  const filteredItems = allItems.filter(
+    (item) =>
+      !selectedItems.some((selected) => selected.boardNo === item.boardNo)
+  );
+
+  lists.value[0].numberList = filteredItems;
+  lists.value[1].numberList = selectedItems;
+};
+
+// boardStorageContent 및 savedPlanList의 변경을 감시
+watch(
+  [boardStorageContent, savedPlanList],
+  () => {
+    updateLists();
+  },
+  { deep: true }
+);
 
 // 클릭한 게시물 인지할때 사용
 const route = useRoute();
@@ -87,7 +100,7 @@ const lists = ref([
 // 클릭으로 아이템을 이동시키는 메소드
 const moveItem = (clickedItem) => {
   let sourceListIdx, sourceItemIdx, targetListIdx;
-  console.log(selectedLists.value);
+  // console.log(selectedLists.value);
   // 해당 아이템과 속한 리스트를 찾습니다.
   lists.value.forEach((list, listIdx) => {
     const itemIdx = list.numberList.findIndex((item) => item === clickedItem);
@@ -120,8 +133,8 @@ const moveItem = (clickedItem) => {
   }
 };
 
-// 계획에 포함된 게시물들
-const savedPlans = ref({
+// 계획에 포함시킨 게시물들
+const selectPlans = ref({
   // pinia로 가져오기
   planStorageNo: pickPlanStorageNo.value,
   userId: userInfo.value.userId,
@@ -133,17 +146,34 @@ const router = useRouter();
 // plan 저장
 const savePlan = async () => {
   try {
-    savedPlans.value.planStorageName = text.value;
+    selectPlans.value.planStorageName = text.value;
     console.log("선택된 계획들", selectedLists.value);
     for (var i = 0; i < selectedLists.value.length; i++) {
-      savedPlans.value.boardNo.push(selectedLists.value[i].boardNo);
+      selectPlans.value.boardNo.push(selectedLists.value[i].boardNo);
     }
-    console.log("vue", savedPlans.value);
+    console.log("vue", selectPlans.value);
     if (index === "0") {
-      await addPlan(savedPlans.value);
+      await addPlan(selectPlans.value);
     } else {
-      await updatePlan(savedPlans.value);
+      await updatePlan(selectPlans.value);
     }
+    router.push({ name: "myPlans" });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getPlansList = async () => {
+  try {
+    await getPlans(pickPlanStorageNo.value);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const deletePlanStorage = async () => {
+  try {
+    await deleteStorage(pickPlanStorageNo.value);
     router.push({ name: "myPlans" });
   } catch (error) {
     console.log(error);
@@ -160,13 +190,17 @@ const savePlan = async () => {
           <div v-if="text === ''">클릭하여 제목을 편집해주세요</div>
           {{ text }}
         </div>
-        <input v-else v-model="text" @blur="stopEditing" placeholder="제목 입력" />
+        <input
+          v-else
+          v-model="text"
+          @blur="stopEditing"
+          placeholder="제목 입력"
+        />
       </div>
       <!-- 저장 및 공유 버튼 -->
       <div class="buttons">
         <div class="save-btn effect" @click="savePlan">저장</div>
-        <div class="share-btn effect">공유</div>
-        <div class="delete-btn effect">삭제</div>
+        <div class="delete-btn effect" @click="deletePlanStorage">삭제</div>
       </div>
     </div>
     <div class="mid">
@@ -174,8 +208,13 @@ const savePlan = async () => {
       <div class="col" v-for="list in lists" :key="list.id">
         <!-- 각 리스트에 대한 컨테이너 -->
         <transition-group :name="`slide-${list.id}`" tag="div">
-          <div class="item" v-for="item in list.numberList" :class="{ clicked: clickedItem === item }"
-            :key="item.boardPlace" @click="moveItem(item, list.id)">
+          <div
+            class="item"
+            v-for="item in list.numberList"
+            :class="{ clicked: clickedItem === item }"
+            :key="item.boardPlace"
+            @click="moveItem(item, list.id)"
+          >
             {{ item.boardPlace }}
           </div>
         </transition-group>

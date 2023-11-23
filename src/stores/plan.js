@@ -1,7 +1,14 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
-import { showPlan, registPlan, planStorageList, modifyPlan } from "@/api/plan";
+import {
+  showPlan,
+  registPlan,
+  planStorageList,
+  modifyPlan,
+  getPlanList,
+  deletePlanStorage,
+} from "@/api/plan";
 import { httpStatusCode } from "@/util/http-status";
 
 export const usePlanStore = defineStore(
@@ -12,18 +19,30 @@ export const usePlanStore = defineStore(
     const pickPlanStorageNo = ref(null);
     // 저장되어있는 보관함 배열
     const savedPlanStorage = ref([]);
+    // 해당 보관함에 저장되어있는 계획들
+    const savedPlanList = ref([]);
 
     const getPlansStorage = async () => {
       await planStorageList(
         (response) => {
           if (response.status === httpStatusCode.OK) {
             savedPlanStorage.value = response.data.planStorageList;
-            // console.log("피니아", savedPlanStorage.value);
-            // console.log("피니아에서", savedPlanStorage.value);
-            // console.log("피니아에서", response.data);
           } else {
             console.error("안찍혀");
           }
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    };
+
+    const getPlans = async (planStorageNo) => {
+      await getPlanList(
+        planStorageNo,
+        (response) => {
+          console.log("백에서 받은거", response.data);
+          savedPlanList.value = response.data;
         },
         (error) => {
           console.error(error);
@@ -79,6 +98,19 @@ export const usePlanStore = defineStore(
       );
     };
 
+    const deleteStorage = async (storageNo) => {
+      console.log("삭제 메서드 호출", storageNo);
+      await deletePlanStorage(
+        storageNo,
+        (response) => {
+          console.log(response.data);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    };
+
     return {
       detailPlan,
       addPlan,
@@ -86,6 +118,9 @@ export const usePlanStore = defineStore(
       savedPlanStorage,
       updatePlan,
       getPlansStorage,
+      getPlans,
+      savedPlanList,
+      deleteStorage,
     };
   },
   {

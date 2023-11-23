@@ -19,4 +19,19 @@ async function planStorageList(success, fail) {
   await local.get(`/plan/list`).then(success).catch(fail);
 }
 
-export { showPlan, registPlan, modifyPlan, planStorageList };
+async function getPlanList(planStorageNo, success, fail) {
+  await local.get(`/plan/list/${planStorageNo}`).then(success).catch(fail);
+}
+
+async function deletePlanStorage(planStorageNo, success, fail) {
+  await local.delete(`/plan/${planStorageNo}`).then(success).catch(fail);
+}
+
+export {
+  showPlan,
+  registPlan,
+  modifyPlan,
+  planStorageList,
+  getPlanList,
+  deletePlanStorage,
+};

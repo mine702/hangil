@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import router from "../../router";
 import { usePlanStore } from "@/stores/plan";
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member";
