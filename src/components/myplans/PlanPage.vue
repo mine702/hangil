@@ -14,8 +14,6 @@ const { userInfo } = storeToRefs(memberStore);
 const { boardStorageContent } = storeToRefs(boardStore);
 const { boardStorage } = boardStore;
 
-<<<<<<< Updated upstream
-=======
 const planStore = usePlanStore();
 const { addPlan, getPlansStorage, updatePlan } = planStore;
 const { pickPlanStorageNo, savedPlanStorage } = storeToRefs(planStore);
@@ -24,7 +22,6 @@ const { pickPlanStorageNo, savedPlanStorage } = storeToRefs(planStore);
 const selectedLists = ref([]);
 
 // mine 추가
->>>>>>> Stashed changes
 onMounted(async () => {
   await boardStorage(userInfo.value.userId);
   await getPlansStorage();
@@ -163,12 +160,7 @@ const savePlan = async () => {
           <div v-if="text === ''">클릭하여 제목을 편집해주세요</div>
           {{ text }}
         </div>
-        <input
-          v-else
-          v-model="text"
-          @blur="stopEditing"
-          placeholder="제목 입력"
-        />
+        <input v-else v-model="text" @blur="stopEditing" placeholder="제목 입력" />
       </div>
       <!-- 저장 및 공유 버튼 -->
       <div class="buttons">
@@ -182,13 +174,8 @@ const savePlan = async () => {
       <div class="col" v-for="list in lists" :key="list.id">
         <!-- 각 리스트에 대한 컨테이너 -->
         <transition-group :name="`slide-${list.id}`" tag="div">
-          <div
-            class="item"
-            v-for="item in list.numberList"
-            :class="{ clicked: clickedItem === item }"
-            :key="item.boardPlace"
-            @click="moveItem(item, list.id)"
-          >
+          <div class="item" v-for="item in list.numberList" :class="{ clicked: clickedItem === item }"
+            :key="item.boardPlace" @click="moveItem(item, list.id)">
             {{ item.boardPlace }}
           </div>
         </transition-group>

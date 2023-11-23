@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
+import { useRouter } from "vue-router";
 import "swiper/css";
 import "swiper/bundle";
 import MypageCard from "./MypageCard.vue";
@@ -9,10 +10,10 @@ import { storeToRefs } from "pinia";
 import { useBoardStore } from "@/stores/board";
 import { useMemberStore } from "@/stores/member";
 
+const router = useRouter();
 const memberStore = useMemberStore();
 const boardStore = useBoardStore();
 const { userInfo } = storeToRefs(memberStore);
-const { boardStorageContent, myPosts } = storeToRefs(boardStore);
 const { myBoardDelete, boardStorageContentDelete } = boardStore;
 
 // 활성화된 모달의 데이터를 저장하는 ref
@@ -46,33 +47,22 @@ const handleDeleteConfirmed = async (post) => {
     await boardStorageContentDelete(userInfo.value.userId, post.post);
     console.log("savepost");
   }
+  router.go(0);
 };
 </script>
 
 <template>
   <div class="user-post">
     <!-- 게시물이 3개 이상일 때 Swiper를 사용 -->
-    <Swiper
-      v-if="posts.length > 3"
-      :slides-per-view="4"
-      :space-between="10"
-      :navigation="{
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      }"
-      :pagination="{ clickable: true }"
-      :loop="true"
-      class="my-swiper"
-    >
+    <Swiper v-if="posts.length > 3" :slides-per-view="4" :space-between="10" :navigation="{
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    }" :pagination="{ clickable: true }" :loop="true" class="my-swiper">
       <div class="swiper-button-prev">&lt;</div>
       <SwiperSlide v-for="post in posts" :key="post.id">
         <div class="post-card">
-          <MypageCard
-            :post="post"
-            :form="'mypost'"
-            @openModal="showModal($event, post)"
-            @deleteConfirmed="handleDeleteConfirmed"
-          ></MypageCard>
+          <MypageCard :post="post" :form="'mypost'" @openModal="showModal($event, post)"
+            @deleteConfirmed="handleDeleteConfirmed"></MypageCard>
         </div>
       </SwiperSlide>
       <div class="swiper-button-next">&gt;</div>
@@ -82,12 +72,8 @@ const handleDeleteConfirmed = async (post) => {
       <div class="swiper-wrapper">
         <div class="swiper-slide" v-for="post in posts" :key="post.id">
           <div class="post-card">
-            <MypageCard
-              :post="post"
-              :form="'savepost'"
-              @openModal="showModal($event, post)"
-              @deleteConfirmed="handleDeleteConfirmed"
-            ></MypageCard>
+            <MypageCard :post="post" :form="'savepost'" @openModal="showModal($event, post)"
+              @deleteConfirmed="handleDeleteConfirmed"></MypageCard>
           </div>
         </div>
       </div>
@@ -117,16 +103,21 @@ const handleDeleteConfirmed = async (post) => {
   position: relative;
   display: flex;
   padding-left: 20px;
-  justify-content: start; /* 카드를 왼쪽부터 정렬 */
+  justify-content: start;
+  /* 카드를 왼쪽부터 정렬 */
 }
+
 .swiper-wrapper {
   display: flex;
 }
 
 .swiper-slide {
-  flex: 0 0 auto; /* 카드의 크기가 내용에 따라 결정되도록 설정 */
-  width: 33.3333%; /* 3개가 나란히 표시될 수 있도록 너비 설정 */
-  margin-right: 10px; /* 카드 사이의 간격 설정 */
+  flex: 0 0 auto;
+  /* 카드의 크기가 내용에 따라 결정되도록 설정 */
+  width: 33.3333%;
+  /* 3개가 나란히 표시될 수 있도록 너비 설정 */
+  margin-right: 10px;
+  /* 카드 사이의 간격 설정 */
 }
 
 .post-card {
@@ -156,6 +147,7 @@ const handleDeleteConfirmed = async (post) => {
 .swiper-button-prev {
   left: -1%;
 }
+
 .swiper-button-next {
   right: -1%;
 }

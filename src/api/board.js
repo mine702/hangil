@@ -31,6 +31,19 @@ async function boardDelete(boardNo, success, fail) {
   await local.delete(`/board/delete/${boardNo}`).then(success).catch(fail);
 }
 
+async function searchBoard(searchWord, success, fail) {
+  await local
+    .get(`/board/search`, { params: { searchWord } })
+    .then(success)
+    .catch(fail);
+}
+
+async function boardStorageContentDeleteByUserId(params, success, fail) {
+  await local
+    .delete(`/board/boardStorageContentDelete`, { params: params })
+    .then(success)
+    .catch(fail);
+}
 export {
   boardDelete,
   boardWrite,
@@ -38,4 +51,6 @@ export {
   boardSave,
   getBoardStorage,
   getMyBoard,
+  searchBoard,
+  boardStorageContentDeleteByUserId,
 };

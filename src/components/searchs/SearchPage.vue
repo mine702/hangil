@@ -1,27 +1,38 @@
 <script setup>
+import { ref } from "vue"
 // import SearchWordForm from "./forms/SearchWordForm.vue";
 import modalCard from "./forms/cards/modalCard.vue";
+import { useBoardStore } from "@/stores/board";
+import { storeToRefs } from "pinia";
+
+const searchWord = ref("");
+
+const boardStore = useBoardStore();
+const { searchBoardByWord } = boardStore;
+const { searchBoards } = storeToRefs(boardStore);
+
+const buttonClick = async () => {
+  await searchBoardByWord(searchWord.value);
+}
 </script>
 
 <template>
   <div class="forms-container">
     <div id="cover">
-      <form method="get" action="">
-        <div class="tb">
-          <div class="td">
-            <input type="text" placeholder="Search" required />
-          </div>
-          <div class="td" id="s-cover">
-            <button type="submit">
-              <div id="s-circle"></div>
-              <span></span>
-            </button>
-          </div>
+      <div class="tb">
+        <div class="td">
+          <input type="text" placeholder="Search" required v-model="searchWord" />
         </div>
-      </form>
+        <div class="td" id="s-cover">
+          <button @click="buttonClick">
+            <div id="s-circle"></div>
+            <span></span>
+          </button>
+        </div>
+      </div>
     </div>
     <div class="searchResult">
-      <modalCard />
+      <modalCard v-for="board in searchBoards" :key="board.boardNo" :data="board" />
     </div>
   </div>
 </template>
@@ -53,6 +64,7 @@ import modalCard from "./forms/cards/modalCard.vue";
   max-height: 80%;
   margin-bottom: 5%;
 }
+
 .tb {
   display: table;
   width: 100%;

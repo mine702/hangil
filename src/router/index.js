@@ -34,7 +34,7 @@ const router = createRouter({
     },
     {
       path: "/home",
-      name: "Home",
+      name: "home",
       component: TheHomeView,
       redirect: { name: "boardView" },
       children: [
@@ -77,7 +77,7 @@ const router = createRouter({
               component: () => import("../components/myplans/MyPlans.vue"),
             },
             {
-              path: "/planPage/:index",
+              path: "/planPage",
               name: "planPage",
               component: () => import("../components/myplans/PlanPage.vue"),
             },

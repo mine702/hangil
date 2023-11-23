@@ -76,12 +76,7 @@ onMounted(async () => {
     <!-- 폼 내용 -->
     <div class="board-form">
       <!-- 폼 내용 -->
-      <CommonCard
-        v-for="post in posts"
-        :key="post.id"
-        :data="post"
-        @click="showModal($event, post)"
-      />
+      <CommonCard v-for="post in posts" :key="post.id" :data="post" @click="showModal($event, post)" />
     </div>
     <MessageForm class="message-form" />
 
