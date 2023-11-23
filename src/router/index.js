@@ -77,7 +77,7 @@ const router = createRouter({
               component: () => import("../components/myplans/MyPlans.vue"),
             },
             {
-              path: "/planPage",
+              path: "/planPage/:index",
               name: "planPage",
               component: () => import("../components/myplans/PlanPage.vue"),
             },

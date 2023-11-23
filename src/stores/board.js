@@ -55,7 +55,7 @@ export const useBoardStore = defineStore("boardStore", () => {
       boardStorage,
       (response) => {
         if (response.status === httpStatusCode.OK) {
-          console.log("성공");
+          // console.log("성공");
         } else {
           console.log("실패");
         }
@@ -71,6 +71,10 @@ export const useBoardStore = defineStore("boardStore", () => {
       userId,
       (response) => {
         if (response.status === httpStatusCode.OK) {
+<<<<<<< Updated upstream
+=======
+          // console.log("성공");
+>>>>>>> Stashed changes
           boardStorageContent.value = response.data.boardList;
         } else {
           console.log("실패");

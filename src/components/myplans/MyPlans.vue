@@ -5,26 +5,17 @@ import { usePlanStore } from "@/stores/plan";
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member";
 
-let items = ref([
-  {
-    title: "Daejoen",
-  },
-  {
-    title: "Seoul",
-  },
-  {
-    title: "Busan",
-  },
-  {
-    title: "Jeju",
-  },
-  {
-    title: "Japan",
-  },
-  {
-    title: "Sydney",
-  },
-]);
+const planStore = usePlanStore();
+const { pickPlanStorageNo, savedPlanStorage } = storeToRefs(planStore);
+const { detailPlan, getPlansStorage } = planStore;
+
+const setPlansStorage = () => {
+  savedPlanStorage.value.forEach((plan) => {
+    items.value.push(plan);
+  });
+};
+
+let items = ref([]);
 let progress = ref(0);
 let active = ref(0);
 let isDown = ref(false);
@@ -35,24 +26,13 @@ let nowIdx = ref(0);
 
 const memberStore = useMemberStore();
 const { userInfo } = storeToRefs(memberStore);
-const newPlanStorage = ref([
-  {
-    userId: userInfo.userId,
-    planStorageName: null,
-  },
-]);
-
-const planStore = usePlanStore();
-let { pickPlanStorageNo } = storeToRefs(planStore);
-const { detailPlan, getPlansStorage } = planStore;
 
 const handleItemClick = async (index) => {
   if (index === nowIdx.value) {
     pickPlanStorageNo.value = index + 1;
     await detailPlan(index + 1);
-    router.push({ name: "planPage" });
   } else {
-    progress.value = (index / items.value.length) * 100 + 10;
+    progress.value = (index / items.value.length) * 100 + 7;
     animate();
     nowIdx.value = index;
   }
@@ -71,8 +51,6 @@ const animate = () => {
 const getZIndex = (index) => {
   return index - active.value;
 };
-
-const activeIndex = ref(0); // 현재 활성화된 요소의 인덱스
 
 // 현재 활성화된 요소의 인덱스를 계산하는 함수
 const calculateActiveIndex = () => {
@@ -113,6 +91,7 @@ const handleMouseUp = () => {
 
 onMounted(async () => {
   await getPlansStorage(); // 초기 계획 저장소 로드
+  setPlansStorage();
   animate();
 });
 </script>
@@ -139,8 +118,7 @@ onMounted(async () => {
       }"
     >
       <div class="carousel-box">
-        <div class="title">{{ item.title }}</div>
-
+        <div class="title">{{ item.planStorageName }}</div>
         <img :src="`https://source.unsplash.com/300x225/?nature`" />
       </div>
     </div>

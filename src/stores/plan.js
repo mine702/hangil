@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
-import { showPlan, registPlan, planStorageList } from "@/api/plan";
+import { showPlan, registPlan, planStorageList, modifyPlan } from "@/api/plan";
 import { httpStatusCode } from "@/util/http-status";
 
 export const usePlanStore = defineStore(
@@ -14,21 +14,28 @@ export const usePlanStore = defineStore(
     const savedPlanStorage = ref([]);
 
     const getPlansStorage = async () => {
-      await planStorageList((response) => {
-        if (response.status === httpStatusCode.OK) {
-          savedPlanStorage.value = response.data.planStorageList;
-          console.log(savedPlanStorage.value);
-        } else {
-          console.error("안찍혀");
+      await planStorageList(
+        (response) => {
+          if (response.status === httpStatusCode.OK) {
+            savedPlanStorage.value = response.data.planStorageList;
+            // console.log("피니아", savedPlanStorage.value);
+            // console.log("피니아에서", savedPlanStorage.value);
+            // console.log("피니아에서", response.data);
+          } else {
+            console.error("안찍혀");
+          }
+        },
+        (error) => {
+          console.error(error);
         }
-      });
+      );
     };
 
     const detailPlan = async (planStorageNo) => {
       await showPlan(
         planStorageNo,
         (response) => {
-          router.push(`/plan/${planStorageNo}`);
+          router.push({ name: "planPage", params: { index: planStorageNo } });
         },
         (error) => {
           console.error(error);
@@ -37,7 +44,7 @@ export const usePlanStore = defineStore(
     };
 
     const addPlan = async (planInfo) => {
-      console.log("저장 메서드 호출", planInfo);
+      console.log("저장 메서드 호출", planInfo[0]);
       await registPlan(
         {
           planStorageNo: planInfo.planStorageNo,
@@ -46,7 +53,6 @@ export const usePlanStore = defineStore(
           planStorageContents: planInfo.boardNo,
         },
         (response) => {
-          // console.log(planStorageName);
           // savedPlanStorage.push(planStorageName);
         },
         (error) => {

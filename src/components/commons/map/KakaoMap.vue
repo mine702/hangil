@@ -4,9 +4,10 @@ import { ref, watch, onMounted } from "vue";
 var map;
 const positions = ref([]);
 const markers = ref([]);
-const props = defineProps({ lists: Object, selectLists: Object });
+const props = defineProps({ lists: Object });
 
 onMounted(() => {
+  console.log(props.lists);
   if (window.kakao && window.kakao.maps) {
     initMap();
   } else {
@@ -28,12 +29,19 @@ watch(
 
     markList.forEach((list) => {
       let obj = {};
-      obj.latlng = new kakao.maps.LatLng(list.boardLatitude, list.boardLongitude);
-      obj.title = list.content;
+      obj.latlng = new kakao.maps.LatLng(
+        list.boardLatitude,
+        list.boardLongitude
+      );
+      obj.title = list.boardPlace;
       positions.value.push(obj);
     });
 
-    loadMarkers();
+    if (markList.length > 0) {
+      loadMarkers();
+    } else {
+      deleteAllMarkers();
+    }
   },
   { deep: true }
 );
@@ -51,6 +59,12 @@ const initMap = () => {
 
 const loadMarkers = () => {
   // 현재 표시되어있는 marker들이 있다면 map에 등록된 marker를 제거한다.
+  // if (props.lists[1].length === 0) {
+  //   return;
+  // }
+  // console.log(props.lists[0]);
+  // console.log(props.lists[1]);
+
   deleteAllMarkers();
 
   // 마커 이미지를 생성합니다
@@ -58,15 +72,14 @@ const loadMarkers = () => {
   // 마커 이미지의 이미지 크기 입니다
   //   const imgSize = new kakao.maps.Size(24, 35);
   //   const markerImage = new kakao.maps.MarkerImage(imgSrc, imgSize);
-
-  // 마커를 생성합니다
+  // // 마커를 생성합니다
   markers.value = [];
-
   const markList = props.lists[1].numberList;
+
   markList.forEach((list) => {
     let obj = {};
     obj.latlng = new kakao.maps.LatLng(list.boardLatitude, list.boardLongitude);
-    obj.title = list.content;
+    obj.title = list.boardPlace;
     positions.value.push(obj);
   });
 
@@ -80,7 +93,6 @@ const loadMarkers = () => {
     });
     markers.value.push(marker);
   });
-
   // 4. 지도를 이동시켜주기
   // 배열.reduce( (누적값, 현재값, 인덱스, 요소)=>{ return 결과값}, 초기값);
   const bounds = positions.value.reduce(

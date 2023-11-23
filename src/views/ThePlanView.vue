@@ -9,7 +9,7 @@ const isToggled2 = ref(localStorage.getItem("isToggled2") === "true");
 watch(isToggled2, (newValue) => {
   localStorage.setItem("isToggled2", newValue); // 토글 상태를 localStorage에 저장
   if (newValue) {
-    router.push({ name: "planPage" });
+    router.push({ name: "planPage", params: { index: 0 } });
   } else {
     router.push({ name: "myPlans" });
   }
@@ -17,9 +17,7 @@ watch(isToggled2, (newValue) => {
 
 // 페이지 로드 시 라우터 상태에 따라 토글 상태를 설정할 수 있음
 router.afterEach((to) => {
-  if (to.name === "planPage") {
-    isToggled2.value = true;
-  } else if (to.name === "myPlans") {
+  if (to.name === "myPlans") {
     isToggled2.value = false;
   }
 });
@@ -90,11 +88,11 @@ router.afterEach((to) => {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-input:checked+.toggle-slider {
+input:checked + .toggle-slider {
   background-color: #7b68ee;
 }
 
-input:checked+.toggle-slider:before {
+input:checked + .toggle-slider:before {
   transform: translateX(26px);
 }
 </style>

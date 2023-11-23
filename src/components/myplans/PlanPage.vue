@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import KakaoMap from "@/components/commons/map/KakaoMap.vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { usePlanStore } from "@/stores/plan";
 import { useBoardStore } from "@/stores/board";
@@ -9,18 +9,55 @@ import { useMemberStore } from "@/stores/member";
 
 const memberStore = useMemberStore();
 const boardStore = useBoardStore();
+
 const { userInfo } = storeToRefs(memberStore);
 const { boardStorageContent } = storeToRefs(boardStore);
 const { boardStorage } = boardStore;
 
+<<<<<<< Updated upstream
+=======
+const planStore = usePlanStore();
+const { addPlan, getPlansStorage, updatePlan } = planStore;
+const { pickPlanStorageNo, savedPlanStorage } = storeToRefs(planStore);
+
+// 클릭한 객체의 배열저장
+const selectedLists = ref([]);
+
+// mine 추가
+>>>>>>> Stashed changes
 onMounted(async () => {
   await boardStorage(userInfo.value.userId);
-  console.log(boardStorageContent.value);
-});
-// mine 추가
+  await getPlansStorage();
 
+  const allItems = boardStorageContent.value;
+  const selectedItems = selectedLists.value;
+
+  console.log(allItems);
+  console.log(selectedItems);
+
+  // 선택되지 않은 요소들
+  lists.value[0].numberList = allItems.filter(
+    (item) => !selectedItems.includes(item.boardNo)
+  );
+
+  // 선택된 요소들
+  lists.value[1].numberList = allItems.filter((item) =>
+    selectedItems.includes(item.boardNo)
+  );
+
+  if (index > 0) {
+    text.value =
+      savedPlanStorage.value[pickPlanStorageNo.value - 1].planStorageName;
+  } else {
+    text.value = "클릭하여 제목을 편집해주세요";
+  }
+});
+
+// 클릭한 게시물 인지할때 사용
+const route = useRoute();
+const { index } = route.params;
 // 계획 제목
-const text = ref("클릭하여 제목을 편집해주세요");
+const text = ref("");
 const originalText = ref(""); // 원본 제목을 저장하기 위한 ref
 const isEditing = ref(false);
 const clickedItem = ref(null); // 클릭된 아이템을 추적하기 위한 ref 생성
@@ -42,26 +79,7 @@ const stopEditing = () => {
 const lists = ref([
   {
     id: 1,
-    numberList: [
-      {
-        boardId: 1,
-        content: "스시하린",
-        boardLatitude: 36.3582732,
-        boardLongitude: 127.3032399,
-      },
-      {
-        boardId: 2,
-        content: "내 집",
-        boardLatitude: 36.358548,
-        boardLongitude: 127.3026399,
-      },
-      {
-        boardId: 3,
-        content: "맥도날드",
-        boardLatitude: 36.3543351,
-        boardLongitude: 127.3403842,
-      },
-    ],
+    numberList: [],
   },
   {
     id: 2,
@@ -69,13 +87,10 @@ const lists = ref([
   },
 ]);
 
-// 클릭한 객체의 boardNo를저장할 배열
-const selectedLists = ref([]);
-
 // 클릭으로 아이템을 이동시키는 메소드
 const moveItem = (clickedItem) => {
   let sourceListIdx, sourceItemIdx, targetListIdx;
-
+  console.log(selectedLists.value);
   // 해당 아이템과 속한 리스트를 찾습니다.
   lists.value.forEach((list, listIdx) => {
     const itemIdx = list.numberList.findIndex((item) => item === clickedItem);
@@ -97,7 +112,7 @@ const moveItem = (clickedItem) => {
 
   // 누른게 왼쪽에 있었을때(계획에 추가할때)
   if (sourceListIdx === 0) {
-    selectedLists.value.push(clickedItem.boardId);
+    selectedLists.value.push(clickedItem);
   }
   // 누른게 오른쪽에 있었을때
   else {
@@ -108,41 +123,31 @@ const moveItem = (clickedItem) => {
   }
 };
 
-const planStore = usePlanStore();
-const { addPlan, getPlansStorage } = planStore;
-const { pickPlanStorageNo, savedPlanStorage } = storeToRefs(planStore);
-
-// plan들의 id가 들어있는 배열
-const plans = ref({
+// 계획에 포함된 게시물들
+const savedPlans = ref({
   // pinia로 가져오기
   planStorageNo: pickPlanStorageNo.value,
   userId: userInfo.value.userId,
-  planStorageName: text.value,
-  // savePost에서 가져오기
+  planStorageName: savedPlanStorage.value.planStorageName,
   boardNo: [],
 });
 
 const router = useRouter();
 // plan 저장
 const savePlan = async () => {
-  if (text.value.trim() !== "") {
-    plans.value.planStorageName = text.value;
-  }
   try {
+    savedPlans.value.planStorageName = text.value;
     console.log("선택된 계획들", selectedLists.value);
     for (var i = 0; i < selectedLists.value.length; i++) {
-      plans.value.boardNo.push(selectedLists.value[i]);
+      savedPlans.value.boardNo.push(selectedLists.value[i].boardNo);
     }
-    console.log("vue", plans.value);
-    // 이미 있는 보관함이면 업데이트
-    savedPlanStorage.value.forEach(async (no) => {
-      if (no === plans.value.planStorageNo) {
-        await updatePlan(plans.value);
-        return;
-      }
-    });
-    // 없는 보관함이면 추가
-    await addPlan(plans.value);
+    console.log("vue", savedPlans.value);
+    if (index === "0") {
+      await addPlan(savedPlans.value);
+    } else {
+      await updatePlan(savedPlans.value);
+    }
+    router.push({ name: "myPlans" });
   } catch (error) {
     console.log(error);
   }
@@ -181,15 +186,15 @@ const savePlan = async () => {
             class="item"
             v-for="item in list.numberList"
             :class="{ clicked: clickedItem === item }"
-            :key="item.content"
+            :key="item.boardPlace"
             @click="moveItem(item, list.id)"
           >
-            {{ item.content }}
+            {{ item.boardPlace }}
           </div>
         </transition-group>
       </div>
       <div class="map">
-        <KakaoMap :lists="lists" :selectLists="selectedLists" />
+        <KakaoMap :lists="lists" />
       </div>
     </div>
   </div>
