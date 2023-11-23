@@ -1,22 +1,34 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
-import { showPlan, registPlan } from "@/api/plan";
+import { showPlan, registPlan, planStorageList } from "@/api/plan";
 import { httpStatusCode } from "@/util/http-status";
 
 export const usePlanStore = defineStore(
   "planStore",
   () => {
     const router = useRouter();
-    const planInfo = ref(null);
-    const pickPlanNo = ref(null);
+    // 선택한 보관함 넘버 저장
+    const pickPlanStorageNo = ref(null);
+    // 저장되어있는 보관함 배열
+    const savedPlanStorage = ref([]);
+
+    const getPlansStorage = async () => {
+      await planStorageList((response) => {
+        if (response.status === httpStatusCode.OK) {
+          savedPlanStorage.value = response.data.planStorageList;
+          console.log(savedPlanStorage.value);
+        } else {
+          console.error("안찍혀");
+        }
+      });
+    };
 
     const detailPlan = async (planStorageNo) => {
       await showPlan(
         planStorageNo,
         (response) => {
-          console.log(response.data);
-          // pickPlanNo.value = response.data.planStorageNo;
+          router.push(`/plan/${planStorageNo}`);
         },
         (error) => {
           console.error(error);
@@ -24,76 +36,39 @@ export const usePlanStore = defineStore(
       );
     };
 
-    const addPlan = async () => {
+    const addPlan = async (planInfo) => {
+      console.log("저장 메서드 호출", planInfo);
       await registPlan(
+        {
+          planStorageNo: planInfo.planStorageNo,
+          userId: planInfo.userId,
+          planStorageName: planInfo.planStorageName,
+          planStorageContents: planInfo.boardNo,
+        },
         (response) => {
-          console.log("저장 메서드 호출");
+          // console.log(planStorageName);
+          // savedPlanStorage.push(planStorageName);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    };
+
+    const updatePlan = async (planInfo) => {
+      console.log("업데이트 메서드 호출", planInfo);
+      await modifyPlan(
+        {
+          planStorageNo: planInfo.planStorageNo,
+          userId: planInfo.userId,
+          planStorageName: planInfo.planStorageName,
+          planStorageContents: planInfo.boardNo,
+        },
+        (response) => {
           console.log(response.data);
         },
         (error) => {
           console.error(error);
-        }
-      );
-    };
-
-    const userUpdate = async (updateUser) => {
-      await userModify(
-        updateUser,
-        (response) => {
-          console.log("유저 정보 업데이트 메서드 호출");
-          // 정보수정 성공
-          if (response.status === httpStatusCode.OK) {
-            userInfo.value = response.data.userInfo;
-            console.log("정보수정 성공!!");
-          }
-          // 정보수정 실패
-          else {
-            console.log("정보수정 실패ㅠㅠ");
-          }
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    };
-
-    const getUserInfo = (token) => {
-      let decodeToken = jwtDecode(token);
-      findById(
-        decodeToken.userId,
-        (response) => {
-          if (response.status === httpStatusCode.OK) {
-            userInfo.value = response.data.userInfo;
-          } else {
-            console.log("유저 정보 없음!!!!");
-          }
-        },
-        async (error) => {
-          console.error(
-            "getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: ",
-            error.response.status
-          );
-          isValidToken.value = false;
-          await tokenRegenerate();
-        }
-      );
-    };
-
-    const userLogout = async (userid) => {
-      await logout(
-        userid,
-        (response) => {
-          if (response.status === httpStatusCode.OK) {
-            isLogin.value = false;
-            userInfo.value = null;
-            isValidToken.value = false;
-            sessionStorage.clear();
-          } else {
-            console.error("유저 정보 없음!!!!");
-          }
-        },
-        (error) => {
-          console.log(error);
         }
       );
     };
@@ -101,6 +76,10 @@ export const usePlanStore = defineStore(
     return {
       detailPlan,
       addPlan,
+      pickPlanStorageNo,
+      savedPlanStorage,
+      updatePlan,
+      getPlansStorage,
     };
   },
   {

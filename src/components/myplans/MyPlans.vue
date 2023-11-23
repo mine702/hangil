@@ -2,31 +2,27 @@
 import { ref, onMounted } from "vue";
 import router from "../../router";
 import { usePlanStore } from "@/stores/plan";
+import { storeToRefs } from "pinia";
+import { useMemberStore } from "@/stores/member";
 
 let items = ref([
   {
     title: "Daejoen",
-    num: "1",
   },
   {
     title: "Seoul",
-    num: "2",
   },
   {
     title: "Busan",
-    num: "3",
   },
   {
     title: "Jeju",
-    num: "4",
   },
   {
     title: "Japan",
-    num: "5",
   },
   {
     title: "Sydney",
-    num: "6",
   },
 ]);
 let progress = ref(0);
@@ -37,14 +33,24 @@ const speedWheel = 0.05; // 휠 스크롤 속도 조정
 const speedDrag = 0.1; // 드래그 속도 조정
 let nowIdx = ref(0);
 
+const memberStore = useMemberStore();
+const { userInfo } = storeToRefs(memberStore);
+const newPlanStorage = ref([
+  {
+    userId: userInfo.userId,
+    planStorageName: null,
+  },
+]);
+
 const planStore = usePlanStore();
-// const { isLogin } = storeToRefs(memberStore);
-const { detailPlan } = planStore;
+let { pickPlanStorageNo } = storeToRefs(planStore);
+const { detailPlan, getPlansStorage } = planStore;
 
 const handleItemClick = async (index) => {
   if (index === nowIdx.value) {
+    pickPlanStorageNo.value = index + 1;
     await detailPlan(index + 1);
-    router.push({ name: "planPage", params: { index: index + 1 } });
+    router.push({ name: "planPage" });
   } else {
     progress.value = (index / items.value.length) * 100 + 10;
     animate();
@@ -52,9 +58,10 @@ const handleItemClick = async (index) => {
   }
 };
 
+// 애니메이션 함수
 const animate = () => {
   progress.value = Math.max(0, Math.min(progress.value, 100));
-  active.value = Math.floor((progress.value / 100) * (items.value.length - 1));
+  active.value = calculateActiveIndex();
   items.value.forEach((item, index) => {
     item.zIndex = getZIndex(index);
     item.active = getActiveProperty(index);
@@ -65,8 +72,18 @@ const getZIndex = (index) => {
   return index - active.value;
 };
 
+const activeIndex = ref(0); // 현재 활성화된 요소의 인덱스
+
+// 현재 활성화된 요소의 인덱스를 계산하는 함수
+const calculateActiveIndex = () => {
+  return Math.round(progress.value / (100 / (items.value.length - 1)));
+};
+
+// 각 요소에 대한 --active 값을 계산하는 함수
 const getActiveProperty = (index) => {
-  return (index - active.value) / items.value.length;
+  const activeIndex = calculateActiveIndex();
+  const difference = index - activeIndex;
+  return 0.15 * difference;
 };
 
 const handleWheel = (event) => {
@@ -86,14 +103,16 @@ const handleMouseMove = (event) => {
 
 const handleMouseDown = (event) => {
   isDown.value = true;
-  startX.value = event.clientX || (event.touches && event.touches[0].clientX) || 0;
+  startX.value =
+    event.clientX || (event.touches && event.touches[0].clientX) || 0;
 };
 
 const handleMouseUp = () => {
   isDown.value = false;
 };
 
-onMounted(() => {
+onMounted(async () => {
+  await getPlansStorage(); // 초기 계획 저장소 로드
   animate();
 });
 </script>
@@ -121,7 +140,7 @@ onMounted(() => {
     >
       <div class="carousel-box">
         <div class="title">{{ item.title }}</div>
-        <div class="num">{{ item.num }}</div>
+
         <img :src="`https://source.unsplash.com/300x225/?nature`" />
       </div>
     </div>
@@ -149,7 +168,7 @@ template {
   /* --items: 10; */
   --width: clamp(150px, 30vw, 300px);
   --height: clamp(200px, 40vw, 400px);
-  --x: calc(var(--active) * 500%);
+  --x: calc(var(--active) * 550%);
   --y: calc(var(--active) * 100%);
   --rot: calc(var(--active) * 50deg);
   --opacity: calc(var(--zIndex) / var(--items) * 3 - 2);
