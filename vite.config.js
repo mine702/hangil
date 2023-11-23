@@ -11,7 +11,4 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-  define: {
-    global: "window", // global 객체를 window로 대체합니다
-  },
 });

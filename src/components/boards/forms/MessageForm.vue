@@ -1,49 +1,67 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { ChatService } from "@/api/ChatService";
 import ChatForm from "./chatForm/ChatForm.vue";
 const chat = ref();
 onMounted(() => {
   chat.value.scrollTop = chat.value.scrollHeight - chat.value.clientHeight;
 });
+
+const chatService = new ChatService();
+const message = ref("");
+
+function sendMessage() {
+  chatService.sendMessage({ text: message.value });
+  message.value = "";
+}
+
+onMounted(() => {
+  chatService.connect();
+});
+const showChatInput = ref(false);
+const userId = ref("");
+
+function toggleChatInput() {
+  showChatInput.value = !showChatInput.value;
+}
+
+function startChat() {
+  if (userId.value) {
+    // 여기에 WebSocket을 통해 실시간 채팅을 시작하는 로직을 연결합니다.
+    console.log("Starting chat with user ID:", userId.value);
+    // 예시로 WebSocket 연결 코드를 호출할 수 있습니다.
+    // chatService.startChatWithUser(userId.value);
+    showChatInput.value = false; // 입력 영역을 숨깁니다.
+  }
+}
 </script>
 
 <template>
   <div class="container">
     <!-- partial:index.partial.html -->
     <div class="contacts">
-      <i class="fas fa-bars fa-2x"></i>
-      <h2>Contacts</h2>
+      <div class="user-add">
+        <button class="user-add-button" @click="toggleChatInput">
+          <i class="fa-solid fa-user-plus"></i>
+        </button>
+        <div v-if="showChatInput" class="chat-input-area">
+          <input
+            v-model="userId"
+            placeholder="Enter user ID"
+            class="user-id-input"
+          />
+          <button @click="startChat" class="start-chat-button">Chat</button>
+        </div>
+      </div>
       <div class="contact">
         <div class="pic rogers"></div>
         <div class="badge">14</div>
         <div class="name">Steve Rogers</div>
         <div class="message">That is America's ass 🇺🇸🍑</div>
       </div>
-      <div class="contact">
-        <div class="pic stark"></div>
-        <div class="name">Tony Stark</div>
-        <div class="message">
-          Uh, he's from space, he came here to steal a necklace from a wizard.
-        </div>
-      </div>
-      <div class="contact">
-        <div class="pic banner"></div>
-        <div class="badge">1</div>
-        <div class="name">Bruce Banner</div>
-        <div class="message">There's an Ant-Man *and* a Spider-Man?</div>
-      </div>
-      <div class="contact">
-        <div class="pic thor"></div>
-        <div class="name">Thor Odinson</div>
-        <div class="badge">3</div>
-        <div class="message">I like this one</div>
-      </div>
-      <div class="contact">
-        <div class="pic danvers"></div>
-        <div class="badge">2</div>
-        <div class="name">Carol Danvers</div>
-        <div class="message">Hey Peter Parker, you got something for me?</div>
-      </div>
+      <button class="scroll-button" @click="closeModal">
+        <i class="fa-solid fa-angles-down"></i>
+      </button>
     </div>
 
     <ChatForm ref="chat" />
@@ -68,6 +86,7 @@ onMounted(() => {
 
 .contact {
   position: relative;
+  margin-top: 1rem;
   margin-bottom: 1rem;
   padding-left: 5rem;
   height: 4.5rem;
@@ -297,5 +316,42 @@ onMounted(() => {
 
 .pic.rogers {
   background-image: url("https://vignette.wikia.nocookie.net/marvelcinematicuniverse/images/7/7c/Cap.America_%28We_Don%27t_Trade_Lives_Vision%29.png");
+}
+
+.user-add {
+  /* 버튼과 입력 필드를 함께 묶는 컨테이너 스타일 */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* 추가: 요소들 사이의 간격 */
+}
+
+.user-add-button {
+  font-size: 1.7em;
+}
+.user-id-input {
+  /* 사용자 ID 입력 필드 스타일 */
+  padding: 0.2rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+  flex-grow: 1; /* 추가: 입력 필드가 남은 공간을 모두 차지하도록 설정 */
+}
+
+.start-chat-button {
+  /* 채팅 시작 버튼 스타일 */
+  padding: 0.2rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 200ms;
+  /* 추가: 입력 필드와 동일한 높이 설정 */
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.start-chat-button:hover {
+  /* 채팅 시작 버튼 호버 스타일 */
+  background-color: #0056b3;
 }
 </style>
