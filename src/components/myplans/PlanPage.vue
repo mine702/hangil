@@ -7,6 +7,17 @@ import { usePlanStore } from "@/stores/plan";
 import { useBoardStore } from "@/stores/board";
 import { useMemberStore } from "@/stores/member";
 
+const memberStore = useMemberStore();
+const boardStore = useBoardStore();
+const { userInfo } = storeToRefs(memberStore);
+const { boardStorageContent } = storeToRefs(boardStore);
+const { boardStorage } = boardStore;
+onMounted(async () => {
+  await boardStorage(userInfo.value.userId);
+  console.log(boardStorageContent.value);
+});
+// mine 추가
+
 // 계획 제목
 const text = ref("클릭하여 제목을 편집해주세요");
 const originalText = ref(""); // 원본 제목을 저장하기 위한 ref
@@ -95,12 +106,6 @@ const moveItem = (clickedItem) => {
     }
   }
 };
-
-const boardStore = useBoardStore();
-const { savePost } = storeToRefs(boardStore);
-
-const memberStore = useMemberStore();
-const { userInfo } = storeToRefs(memberStore);
 
 const planStore = usePlanStore();
 const { addPlan, getPlansStorage } = planStore;

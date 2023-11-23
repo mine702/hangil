@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineProps, computed } from "vue";
+import { ref, computed } from "vue";
 
 const props = defineProps({
   data: Object, // 게시글 데이터

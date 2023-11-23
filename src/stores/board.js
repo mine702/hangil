@@ -63,6 +63,7 @@ export const useBoardStore = defineStore("boardStore", () => {
       userId,
       (response) => {
         if (response.status === httpStatusCode.OK) {
+          console.log("성공");
           boardStorageContent.value = response.data.boardList;
         } else {
           console.log("실패");
