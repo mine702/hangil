@@ -12,16 +12,16 @@ const boardStore = useBoardStore();
 const { fetchPosts, fetchMorePosts } = boardStore;
 const { posts } = storeToRefs(boardStore);
 
+const isLoading = ref(false);
+
 // 활성화된 모달의 데이터를 저장하는 ref
 const activeModal = ref(null);
-const isLoading = ref(false);
 
 // 모달을 표시하는 함수
 const showModal = (event, item) => {
   event.preventDefault();
   activeModal.value = item;
 };
-
 
 $(function () {
   var $sidebar = $(".message-form"),
@@ -40,21 +40,7 @@ $(function () {
   });
 });
 
-const handleScroll = async (event) => {
-  const { scrollTop, clientHeight, scrollHeight } = event.target;
-  console.log(scrollTop + clientHeight);
-  console.log(scrollHeight - 5);
-  // 스크롤이 하단에 도달했는지 확인
-  if (scrollTop + clientHeight >= scrollHeight - 5 && !isLoading.value) {
-    console.log("gdd");
-    isLoading.value = true;
-    await fetchMorePosts(); // 추가 게시글 로드
-    isLoading.value = false;
-  }
-};
-
-
-window.addEventListener('scroll', async () => {
+window.addEventListener("scroll", async () => {
   // 문서의 전체 높이
   let documentHeight = document.body.scrollHeight;
 
@@ -86,11 +72,16 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="forms-container" @scroll="handleScroll">
+  <div class="forms-container">
     <!-- 폼 내용 -->
     <div class="board-form">
       <!-- 폼 내용 -->
-      <CommonCard v-for="post in posts" :key="post.id" :data="post" @click="showModal($event, post)" />
+      <CommonCard
+        v-for="post in posts"
+        :key="post.id"
+        :data="post"
+        @click="showModal($event, post)"
+      />
     </div>
     <MessageForm class="message-form" />
 
@@ -159,16 +150,6 @@ onMounted(async () => {
 }
 
 /* 기타 스타일 */
-
-.modal {
-  /* 모달창 스타일 */
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
-  /* 나머지 스타일 */
-}
 
 .modal-overlay {
   position: fixed;

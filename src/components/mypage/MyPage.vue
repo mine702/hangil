@@ -1,6 +1,22 @@
 <script setup>
+import { onMounted } from "vue";
 import UserInfo from "./UserInfo.vue";
 import MypageSlide from "../commons/MypageSlide.vue";
+
+import { storeToRefs } from "pinia";
+import { useBoardStore } from "@/stores/board";
+import { useMemberStore } from "@/stores/member";
+
+const memberStore = useMemberStore();
+const boardStore = useBoardStore();
+const { userInfo } = storeToRefs(memberStore);
+const { boardStorageContent, myPosts } = storeToRefs(boardStore);
+const { myBoard, boardStorage } = boardStore;
+
+onMounted(async () => {
+  await myBoard(userInfo.value.userId);
+  await boardStorage(userInfo.value.userId);
+});
 </script>
 
 <template>
@@ -9,12 +25,12 @@ import MypageSlide from "../commons/MypageSlide.vue";
       <UserInfo />
     </div>
     <div class="card-form">
-      내 게시물
-      <MypageSlide />
+      my post
+      <MypageSlide :data="myPosts" />
     </div>
     <div class="user-picks">
-      저장하고 싶은 게시물
-      <MypageSlide />
+      save post
+      <MypageSlide :data="boardStorageContent" />
     </div>
   </div>
 </template>

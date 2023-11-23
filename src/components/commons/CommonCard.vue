@@ -1,19 +1,14 @@
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 
 const props = defineProps({
   data: Object, // 게시글 데이터
 });
 
-const isModalVisible = ref(false); // 모달 표시 상태
-
 const emits = defineEmits(["openModal"]);
 
 const handleCardClick = () => {
-  isModalVisible.value = true; // 모달 표시 상태 토글
-  emits("openModal", {
-    /* 필요한 데이터를 여기에 전달할 수 있습니다 */
-  });
+  emits("openModal");
 };
 
 const backgroundImageStyle = computed(() => ({
@@ -52,7 +47,6 @@ const backgroundImageStyle = computed(() => ({
       <span class="card__by">by {{ props.data.userId }} </span>
     </div>
   </div>
-  <!-- 모달, isModalVisible이 true일 때만 표시 -->
 </template>
 
 <style scoped>

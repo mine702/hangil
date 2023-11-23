@@ -20,4 +20,22 @@ async function getBoardStorage(userId, success, fail) {
     .catch(fail);
 }
 
-export { boardWrite, boardList, boardSave, getBoardStorage };
+async function getMyBoard(userId, success, fail) {
+  await local
+    .get(`/board/getMyBoard`, { params: { userId } })
+    .then(success)
+    .catch(fail);
+}
+
+async function boardDelete(boardNo, success, fail) {
+  await local.delete(`/board/delete/${boardNo}`).then(success).catch(fail);
+}
+
+export {
+  boardDelete,
+  boardWrite,
+  boardList,
+  boardSave,
+  getBoardStorage,
+  getMyBoard,
+};

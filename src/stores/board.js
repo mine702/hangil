@@ -1,13 +1,21 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import { boardWrite, boardList, boardSave, getBoardStorage } from "@/api/board";
+import {
+  boardWrite,
+  boardList,
+  boardSave,
+  getBoardStorage,
+  getMyBoard,
+  boardDelete,
+} from "@/api/board";
 import { httpStatusCode } from "@/util/http-status";
 
 export const useBoardStore = defineStore("boardStore", () => {
   const posts = ref([]); // 게시글 목록을 저장할 배열
   const page = ref(0); // 현재 페이지 번호
   const limit = ref(5); // 한 페이지에 표시할 게시글 수
-  const boardStorageContent = ref([]);
+  const boardStorageContent = ref([]); // 내가 저장한 게시글
+  const myPosts = ref([]); // 내가 등록한 게시글
 
   const boardSubmit = async (boardDTO) => {
     await boardWrite(boardDTO, (response) => {
@@ -63,7 +71,6 @@ export const useBoardStore = defineStore("boardStore", () => {
       userId,
       (response) => {
         if (response.status === httpStatusCode.OK) {
-          console.log("성공");
           boardStorageContent.value = response.data.boardList;
         } else {
           console.log("실패");
@@ -74,15 +81,46 @@ export const useBoardStore = defineStore("boardStore", () => {
       }
     );
   };
+
+  const myBoard = async (userId) => {
+    await getMyBoard(
+      userId,
+      (response) => {
+        if (response.status === httpStatusCode.OK) {
+          myPosts.value = response.data.boardList;
+        } else {
+          console.log("실패");
+        }
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  };
+
+  const myBoardDelete = async (boardNo) => {
+    await boardDelete(boardNo, (response) => {
+      if (response.status === httpStatusCode.OK) {
+        console.log("성공");
+      } else {
+        console.log("실패");
+      }
+    });
+  };
+  const boardStorageContentDelete = async () => {};
   return {
     posts,
     page,
     limit,
     boardStorageContent,
+    myPosts,
     boardSavePost,
     boardSubmit,
     fetchPosts,
     fetchMorePosts,
     boardStorage,
+    myBoard,
+    myBoardDelete,
+    boardStorageContentDelete,
   };
 });

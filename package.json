@@ -16,6 +16,8 @@
     "locomotive-scroll": "^4.1.4",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.0",
+    "socket.io-client": "^4.7.2",
+    "sweetalert2": "^11.10.1",
     "swiper": "^11.0.4",
     "vue": "^3.3.4",
     "vue-gsap-scrolltrigger-detector": "1.0.0",

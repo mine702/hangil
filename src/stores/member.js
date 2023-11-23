@@ -136,7 +136,7 @@ export const useMemberStore = defineStore(
                 isLogin.value = false;
                 userInfo.value = null;
                 isValidToken.value = false;
-                router.push({ name: "user-login" });
+                router.push({ name: "login" });
               },
               (error) => {
                 console.error(error);

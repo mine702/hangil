@@ -1,48 +1,60 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
 import "swiper/bundle";
-import CardModal from "../commons/modal/CardModal.vue";
 import MypageCard from "./MypageCard.vue";
+import CommonCardModal from "./modal/CommonCardModal.vue";
+import { storeToRefs } from "pinia";
+import { useBoardStore } from "@/stores/board";
+import { useMemberStore } from "@/stores/member";
 
-const isModalVisible = ref(false); // 모달 표시 상태
-const handleCardClick = () => {
-  isModalVisible.value = true; // 모달 표시 상태 토글
+const memberStore = useMemberStore();
+const boardStore = useBoardStore();
+const { userInfo } = storeToRefs(memberStore);
+const { boardStorageContent, myPosts } = storeToRefs(boardStore);
+const { myBoardDelete, boardStorageContentDelete } = boardStore;
+
+// 활성화된 모달의 데이터를 저장하는 ref
+const activeModal = ref(null);
+
+// 모달을 표시하는 함수
+const showModal = (event, item) => {
+  activeModal.value = item;
 };
 
-let posts = ref([
-  {
-    id: 1,
-    title: "제목1",
-    image:
-      "https://img.freepik.com/free-photo/vertical-shot-of-a-wooden-passage-over-a-reflective-small-lake-and-a-mountain-range-on-the-horizon_181624-37099.jpg?size=626&ext=jpg&ga=GA1.1.89001508.1698988307&semt=ais",
-  },
-  {
-    id: 2,
-    title: "제목2",
-    image:
-      "https://img.freepik.com/free-photo/a-digital-painting-of-a-mountain-with-a-colorful-tree-in-the-foreground_1340-25699.jpg?size=626&ext=jpg&ga=GA1.1.89001508.1698988307&semt=ais",
-  },
-  {
-    id: 3,
-    title: "제목3",
-    image:
-      "https://img.freepik.com/free-photo/beautiful-outdoor-view-with-tropical-beach-and-sea_74190-6852.jpg?size=626&ext=jpg&ga=GA1.1.89001508.1698988307&semt=ais",
-  },
-  {
-    id: 4,
-    title: "제목4",
-    image:
-      "https://img.freepik.com/free-photo/aerial-beautiful-shot-of-a-seashore-with-hills-on-the-background-at-sunset_181624-24143.jpg?size=626&ext=jpg&ga=GA1.1.89001508.1698988307&semt=ais",
-  },
-]);
+const props = defineProps({
+  data: Object, // 게시글 데이터
+});
+
+const posts = ref([]);
+
+watch(
+  () => props.data,
+  (newData) => {
+    posts.value = newData;
+  }
+);
+
+const handleDeleteConfirmed = async (post) => {
+  // 삭제 로직 수행
+  console.log(post.post);
+  if (post.form === "mypost") {
+    await myBoardDelete(post.post.boardNo);
+    console.log("mypost");
+  } else {
+    await boardStorageContentDelete(userInfo.value.userId, post.post);
+    console.log("savepost");
+  }
+};
 </script>
 
 <template>
   <div class="user-post">
+    <!-- 게시물이 3개 이상일 때 Swiper를 사용 -->
     <Swiper
-      :slides-per-view="3"
+      v-if="posts.length > 3"
+      :slides-per-view="4"
       :space-between="10"
       :navigation="{
         nextEl: '.swiper-button-next',
@@ -55,14 +67,35 @@ let posts = ref([
       <div class="swiper-button-prev">&lt;</div>
       <SwiperSlide v-for="post in posts" :key="post.id">
         <div class="post-card">
-          <MypageCard :post="post" @click="handleCardClick"></MypageCard>
+          <MypageCard
+            :post="post"
+            :form="'mypost'"
+            @openModal="showModal($event, post)"
+            @deleteConfirmed="handleDeleteConfirmed"
+          ></MypageCard>
         </div>
       </SwiperSlide>
       <div class="swiper-button-next">&gt;</div>
     </Swiper>
-    <transition name="modal">
-      <div class="modal-overlay" v-if="isModalVisible">
-        <CardModal @closeModal="isModalVisible = false" />
+    <!-- 게시물이 3개 미만일 때 Swiper와 유사한 스타일의 카드 레이아웃 사용 -->
+    <div v-else class="my-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide" v-for="post in posts" :key="post.id">
+          <div class="post-card">
+            <MypageCard
+              :post="post"
+              :form="'savepost'"
+              @openModal="showModal($event, post)"
+              @deleteConfirmed="handleDeleteConfirmed"
+            ></MypageCard>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 모달, isModalVisible이 true일 때만 표시 -->
+    <transition name="fade">
+      <div class="modal-overlay" v-if="activeModal">
+        <CommonCardModal :data="activeModal" @close="activeModal = null" />
       </div>
     </transition>
   </div>
@@ -80,9 +113,20 @@ let posts = ref([
 }
 
 .my-swiper {
+  overflow: hidden;
   position: relative;
   display: flex;
   padding-left: 20px;
+  justify-content: start; /* 카드를 왼쪽부터 정렬 */
+}
+.swiper-wrapper {
+  display: flex;
+}
+
+.swiper-slide {
+  flex: 0 0 auto; /* 카드의 크기가 내용에 따라 결정되도록 설정 */
+  width: 33.3333%; /* 3개가 나란히 표시될 수 있도록 너비 설정 */
+  margin-right: 10px; /* 카드 사이의 간격 설정 */
 }
 
 .post-card {
@@ -116,61 +160,33 @@ let posts = ref([
   right: -1%;
 }
 
-.modal {
-  position: fixed;
-  /* 화면에 고정 */
-  top: 50%;
-  /* 상단에서 50% 위치 */
-  left: 50%;
-  /* 좌측에서 50% 위치 */
-  transform: translate(-50%, -50%);
-  /* 중앙 정렬을 위해 자신의 크기의 반만큼 이동 */
-  z-index: 1001;
-  /* 다른 요소들보다 위에 표시되도록 z-index 설정 */
-  /* 모달의 너비, 높이, 백그라운드, 패딩 등 추가 스타일 */
-}
-
-/* 활성화 되는 동안 유지될 스타일 */
-
 .modal-overlay {
-  /* 기존 스타일 유지 */
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  /* 반투명 배경 */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  /* 충분히 높은 값으로 다른 요소 위에 오게 합니다 */
-  transition: background-color 0.3s ease;
-  /* 배경색이 변화할 때 부드럽게 전환 */
+  transition: opacity 0.3s ease;
 }
 
-/* 모달이 나타나는 동안과 사라지는 동안의 배경색 전환을 위한 스타일 추가 */
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.3s ease, background-color 0.3s ease;
+/* fade 애니메이션에 대한 스타일 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
 }
 
-.modal-enter-from,
-.modal-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
-  transform: scale(0);
-  /* 모달이 처음에 작게 시작합니다 */
-  background-color: rgba(0, 0, 0, 0);
-  /* 배경색을 투명하게 시작 */
 }
 
-.modal-enter-to,
-.modal-leave-from {
+.fade-enter-to,
+.fade-leave-from {
   opacity: 1;
-  transform: scale(1);
-  /* 모달이 확대되면서 완전히 나타납니다 */
-  background-color: rgba(0, 0, 0, 0.5);
-  /* 배경색을 투명 검은색으로 전환 */
 }
 </style>

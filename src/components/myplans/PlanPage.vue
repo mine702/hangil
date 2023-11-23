@@ -12,6 +12,7 @@ const boardStore = useBoardStore();
 const { userInfo } = storeToRefs(memberStore);
 const { boardStorageContent } = storeToRefs(boardStore);
 const { boardStorage } = boardStore;
+
 onMounted(async () => {
   await boardStorage(userInfo.value.userId);
   console.log(boardStorageContent.value);
