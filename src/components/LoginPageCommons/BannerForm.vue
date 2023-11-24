@@ -4,30 +4,40 @@
   <div class="page-content">
     <div class="card">
       <div class="content">
-        <h2 class="title">Mountain View</h2>
-        <p class="copy">Check out all of these gorgeous mountain trips with beautiful views of, you guessed it, the
-          mountains</p>
+        <h2 class="title">watch</h2>
+        <p class="copy">
+          "여기에서 게시글을 등록하실 수 있으며, 다른 사용자들이 작성한 게시글을
+          확인하실 수도 있습니다."
+        </p>
         <button class="btn">View Trips</button>
       </div>
     </div>
     <div class="card">
       <div class="content">
-        <h2 class="title">To The Beach</h2>
-        <p class="copy">Plan your next beach trip with these fabulous destinations</p>
+        <h2 class="title">save</h2>
+        <p class="copy">
+          마음에 드는 게시글을 저장 할 수 있으며 저장 한 게시글로 여행 계획을
+          작성 할 수 있습니다.
+        </p>
         <button class="btn">View Trips</button>
       </div>
     </div>
     <div class="card">
       <div class="content">
-        <h2 class="title">Desert Destinations</h2>
-        <p class="copy">It's the desert you've always dreamed of</p>
+        <h2 class="title">plan</h2>
+        <p class="copy">
+          작성한 여행 계획을 카카오 맵 을 사용하여 경로를 지정 할 수 있으며 저장
+          공유 수정 기능을 활용 할 수 있습니다
+        </p>
         <button class="btn">Book Now</button>
       </div>
     </div>
     <div class="card">
       <div class="content">
-        <h2 class="title">Explore The Galaxy</h2>
-        <p class="copy">Seriously, straight up, just blast off into outer space today</p>
+        <h2 class="title">chat</h2>
+        <p class="copy">
+          sns 답게 사용자들간 채팅 기능을 활용 하여 원할한 소통이 가능합니다.
+        </p>
         <button class="btn">Book Now</button>
       </div>
     </div>
@@ -35,8 +45,6 @@
 </template>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css?family=Cardo:400i|Rubik:400,700&display=swap");
-
 * {
   box-sizing: border-box;
 }
@@ -57,7 +65,6 @@ body {
   padding: 1rem;
   max-width: 1024px;
   margin: 0 auto;
-  font-family: "Rubik", sans-serif;
 }
 
 @media (min-width: 600px) {
@@ -82,7 +89,9 @@ body {
   text-align: center;
   color: whitesmoke;
   background-color: whitesmoke;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), 0 2px 2px rgba(0, 0, 0, 0.1), 0 4px 4px rgba(0, 0, 0, 0.1), 0 8px 8px rgba(0, 0, 0, 0.1), 0 16px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), 0 2px 2px rgba(0, 0, 0, 0.1),
+    0 4px 4px rgba(0, 0, 0, 0.1), 0 8px 8px rgba(0, 0, 0, 0.1),
+    0 16px 16px rgba(0, 0, 0, 0.1);
 }
 
 @media (min-width: 600px) {
@@ -113,7 +122,25 @@ body {
   width: 100%;
   height: 200%;
   pointer-events: none;
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.009) 11.7%, rgba(0, 0, 0, 0.034) 22.1%, rgba(0, 0, 0, 0.072) 31.2%, rgba(0, 0, 0, 0.123) 39.4%, rgba(0, 0, 0, 0.182) 46.6%, rgba(0, 0, 0, 0.249) 53.1%, rgba(0, 0, 0, 0.32) 58.9%, rgba(0, 0, 0, 0.394) 64.3%, rgba(0, 0, 0, 0.468) 69.3%, rgba(0, 0, 0, 0.54) 74.1%, rgba(0, 0, 0, 0.607) 78.8%, rgba(0, 0, 0, 0.668) 83.6%, rgba(0, 0, 0, 0.721) 88.7%, rgba(0, 0, 0, 0.762) 94.1%, rgba(0, 0, 0, 0.79) 100%);
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.009) 11.7%,
+    rgba(0, 0, 0, 0.034) 22.1%,
+    rgba(0, 0, 0, 0.072) 31.2%,
+    rgba(0, 0, 0, 0.123) 39.4%,
+    rgba(0, 0, 0, 0.182) 46.6%,
+    rgba(0, 0, 0, 0.249) 53.1%,
+    rgba(0, 0, 0, 0.32) 58.9%,
+    rgba(0, 0, 0, 0.394) 64.3%,
+    rgba(0, 0, 0, 0.468) 69.3%,
+    rgba(0, 0, 0, 0.54) 74.1%,
+    rgba(0, 0, 0, 0.607) 78.8%,
+    rgba(0, 0, 0, 0.668) 83.6%,
+    rgba(0, 0, 0, 0.721) 88.7%,
+    rgba(0, 0, 0, 0.762) 94.1%,
+    rgba(0, 0, 0, 0.79) 100%
+  );
   transform: translateY(-50%);
   transition: transform calc(700ms * 2) cubic-bezier(0.19, 1, 0.22, 1);
 }
@@ -145,7 +172,7 @@ body {
   z-index: 1;
 }
 
-.content>*+* {
+.content > * + * {
   margin-top: 1rem;
 }
 
@@ -156,7 +183,6 @@ body {
 }
 
 .copy {
-  font-family: "Cardo", serif;
   font-size: 1.125rem;
   font-style: italic;
   line-height: 1.35;
@@ -193,10 +219,11 @@ body {
     transform: translateY(calc(100% - 4.5rem));
   }
 
-  .content>*:not(.title) {
+  .content > *:not(.title) {
     opacity: 0;
     transform: translateY(1rem);
-    transition: transform 700ms cubic-bezier(0.19, 1, 0.22, 1), opacity 700ms cubic-bezier(0.19, 1, 0.22, 1);
+    transition: transform 700ms cubic-bezier(0.19, 1, 0.22, 1),
+      opacity 700ms cubic-bezier(0.19, 1, 0.22, 1);
   }
 
   .card:hover,
@@ -219,8 +246,8 @@ body {
     transform: translateY(0);
   }
 
-  .card:hover .content>*:not(.title),
-  .card:focus-within .content>*:not(.title) {
+  .card:hover .content > *:not(.title),
+  .card:focus-within .content > *:not(.title) {
     opacity: 1;
     transform: translateY(0);
     transition-delay: calc(700ms / 8);
@@ -229,7 +256,7 @@ body {
   .card:focus-within:before,
   .card:focus-within:after,
   .card:focus-within .content,
-  .card:focus-within .content>*:not(.title) {
+  .card:focus-within .content > *:not(.title) {
     transition-duration: 0s;
   }
 }

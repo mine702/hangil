@@ -100,8 +100,13 @@ onBeforeUnmount(() => {
   <div class="container" ref="pageContainer">
     <section data-bgcolor="#bcb8ad" data-textcolor="#032f35">
       <div>
-        <img src="../assets/img/hangil_logo.png" style="width: 100%; height: auto" />
-        <p data-scroll data-scroll-speed="2" data-scroll-delay="0.2">with Hangil & SSAFY</p>
+        <img
+          src="../assets/img/hangil_logo.png"
+          style="width: 100%; height: auto"
+        />
+        <p data-scroll data-scroll-speed="2" data-scroll-delay="0.2">
+          with Hangil & SSAFY
+        </p>
       </div>
     </section>
 
@@ -114,8 +119,11 @@ onBeforeUnmount(() => {
     <section id="sectionPin">
       <div class="pin-wrap">
         <h2>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua.
+          "로그인을 하시면 다양한 게시글을 공유하고, 여행에 영감을 줄 수 있는
+          마음에 드는 게시물을 저장할 수 있습니다. 이렇게 모아진 정보로 여행
+          계획을 세우는 데 도움을 받으세요. 여러분만의 특별한 여행 경로를
+          계획하고, 다른 사용자들과 소중한 여행 경험을 공유하며 새로운
+          아이디어를 얻어보세요."
         </h2>
         <img src="../assets/img/slide1.jpg" alt="" />
         <img src="../assets/img/slide2.jpg" alt="" />
@@ -123,7 +131,11 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
-    <section class="loginFormContainer" data-bgcolor="#bcb8ad" data-textcolor="#032f35">
+    <section
+      class="loginFormContainer"
+      data-bgcolor="#bcb8ad"
+      data-textcolor="#032f35"
+    >
       <div>
         <LoginForm />
       </div>
